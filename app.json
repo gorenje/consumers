@@ -1,0 +1,54 @@
+{
+  "name" : "Eccrine Clickstore",
+  "description": "Store clicks to a postgres DB",
+  "keywords": [
+    "productivity"
+  ],
+  "website": "https://github.com/eccrine/clickstore/README.md",
+  "repository": "https://github.com/eccrine/clickstore",
+  "logo": "https://gravatar.com/avatar/62555cab6b84910405b3ea440ad3edf0",
+  "env": {
+    "ACCESS_DOMAINS": {
+      "description": "Comma separator list of domains that should have access",
+      "value": "eccrine.io"
+    },
+    "ACCESS_EMAILS": {
+      "description": "Comma separated list of external emails that should have access",
+      "required": false
+    },
+    "GOOGLE_CLIENT_ID": {
+      "description": "Key for OAuth2 authentication"
+    },
+    "GOOGLE_CLIENT_SECRET": {
+      "description": "Secret for OAuth2 authentication"
+    },
+    "REDIS_POOL_SIZE": {
+      "description": "How many parallel connections to redis",
+      "value": "4"
+    },
+    "COOKIE_SECRET": {
+      "description": "Secret for the cookie storage",
+      "generator": "secret"
+    },
+    "LIBRATO_PREFIX": {
+      "description": "Prefix for the librato metric names"
+    },
+    "LIBRATO_TOKEN": {
+      "description": "Librato API token"
+    },
+    "LIBRATO_USER": {
+      "description": "Name of the librato user, i.e. email"
+    },
+    "KAFKA_HOST": {
+      "description": "Name of the kafka host"
+    },
+    "CLICK_DATABASE_URL": {
+      "description": "URL to the click database"
+    }
+  },
+  "addons": [
+    "papertrail",
+    "redistogo",
+    "heroku-postgresql"
+  ]
+}
