@@ -13,7 +13,7 @@ module Consumers
     def perform
       $kafka_postback_consumer.subscribe("inapp")
       $kafka_postback_consumer.each_message do |message|
-
+        ## TODO do something here.
       end
     rescue Exception => e
       puts e.message

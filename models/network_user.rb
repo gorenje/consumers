@@ -1,4 +1,4 @@
-class User < ActiveRecord::Base
+class NetworkUser < ActiveRecord::Base
   def self.connection_key
     :localdb
   end

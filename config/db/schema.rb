@@ -17,21 +17,7 @@ ActiveRecord::Schema.define(version: 20160512081935) do
   enable_extension "plpgsql"
   enable_extension "hstore"
 
-  create_table "postbacks", force: :cascade do |t|
-    t.string  "network"
-    t.string  "event"
-    t.integer "user_id"
-    t.boolean "user_required",   default: false
-    t.boolean "store_user",      default: false
-    t.json    "check"
-    t.hstore  "user_attributes"
-    t.hstore  "netcfg"
-    t.string  "url_template"
-  end
-
-  add_index "postbacks", ["network", "event"], name: "index_postbacks_on_network_and_event", using: :btree
-
-  create_table "users", force: :cascade do |t|
+  create_table "network_users", force: :cascade do |t|
     t.string   "user_identifier", limit: 64
     t.string   "network",         limit: 512
     t.integer  "user_id"
@@ -40,8 +26,21 @@ ActiveRecord::Schema.define(version: 20160512081935) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["user_identifier", "user_id", "network"], name: "index_users_on_user_identifier_and_user_id_and_network", using: :btree
-  add_index "users", ["user_identifier", "user_id"], name: "index_users_on_user_identifier_and_user_id", using: :btree
-  add_index "users", ["user_identifier"], name: "index_users_on_user_identifier", using: :btree
+  add_index "network_users", ["user_identifier", "user_id", "network"], name: "index_network_users_on_user_identifier_and_user_id_and_network", using: :btree
+  add_index "network_users", ["user_identifier", "user_id"], name: "index_network_users_on_user_identifier_and_user_id", using: :btree
+  add_index "network_users", ["user_identifier"], name: "index_network_users_on_user_identifier", using: :btree
+
+  create_table "postbacks", force: :cascade do |t|
+    t.string  "network"
+    t.string  "event"
+    t.string  "platform"
+    t.integer "user_id"
+    t.boolean "user_required", default: false
+    t.boolean "store_user",    default: false
+    t.json    "env"
+    t.string  "url_template"
+  end
+
+  add_index "postbacks", ["network", "event", "platform"], name: "index_postbacks_on_network_and_event_and_platform", using: :btree
 
 end

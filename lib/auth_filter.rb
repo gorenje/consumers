@@ -5,7 +5,7 @@ class AuthFilter
 
   def call(env)
     request = Rack::Request.new(env)
-    unless request.session[:authenticated] || request.path_info =~ /^\/(auth|pingdom)/
+    unless request.session[:authenticated] || request.path_info =~ /^\/(auth|pingdom|api)/
       request.session[:lgkp] = request.path
       return [ 307, { 'Location' => '/auth/google_oauth2'}, []]
     end

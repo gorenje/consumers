@@ -10,7 +10,7 @@ module Consumers
     def perform
       $kafka_attribution_consumer.subscribe("inapp")
       $kafka_attribution_consumer.each_message do |message|
-
+        ## TODO do something here.
       end
     rescue Exception => e
       puts e.message

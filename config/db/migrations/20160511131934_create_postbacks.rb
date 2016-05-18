@@ -3,17 +3,16 @@ class CreatePostbacks < ActiveRecord::Migration
     create_table :postbacks do |t|
       t.string  :network
       t.string  :event
+      t.string  :platform
       t.integer :user_id
 
       t.boolean :user_required, :default => false
       t.boolean :store_user, :default => false
 
-      t.json    :check
-      t.hstore  :user_attributes
-      t.hstore  :netcfg
+      t.json    :env
       t.string  :url_template, :length => 1024
     end
 
-    add_index "postbacks", ["network", "event"]
+    add_index "postbacks", ["network", "event", "platform"]
   end
 end
