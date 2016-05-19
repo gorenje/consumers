@@ -157,6 +157,7 @@ GEM
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
+    uuidtools (2.1.5)
 
 PLATFORMS
   ruby
@@ -166,6 +167,7 @@ DEPENDENCIES
   activerecord
   addressable
   dotenv
+  erubis
   fakeweb
   foreman
   hiredis
@@ -187,6 +189,7 @@ DEPENDENCIES
   sinatra
   sinatra-contrib
   unicorn
+  uuidtools
 
 BUNDLED WITH
    1.11.2

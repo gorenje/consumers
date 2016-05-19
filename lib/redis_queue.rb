@@ -8,6 +8,14 @@ class RedisQueue
     @key             = key
   end
 
+  def jpush(elements)
+    push([elements].flatten.compact.map { |e| JSON.dump(e) })
+  end
+
+  def jpop(number_of_elements = 20)
+    pop(number_of_elements).compact.map { |element| JSON.parse(element) }
+  end
+
   def push(elements)
     with_redis do |redis|
       redis.pipelined do |pipe|

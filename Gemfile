@@ -33,6 +33,9 @@ gem 'pg'
 gem 'active_record_migrations'
 gem 'addressable'
 
+gem 'erubis'
+gem 'uuidtools'
+
 group :development do
   gem 'dotenv'
 end
