@@ -5,24 +5,20 @@ require 'sidekiq/cron/web'
 
 require_relative 'redis'
 
-cron_jobs = [{
-               'name'  => 'postback_consumer',
-               'class' => 'Consumers::Postback',
+cron_jobs = [
+             {
+               'name'  => 'url_worker_scheduler',
+               'class' => 'Scheduler::Url',
                'cron'  => '*/1 * * * *',
                'args'  => nil
              },
              {
-               'name'  => 'batch_scheduler',
-               'class' => 'BatchScheduler',
+               'name'  => 'postback_consumer_scheduler',
+               'class' => 'Scheduler::Postbacks',
                'cron'  => '*/1 * * * *',
                'args'  => nil
              },
-             {
-               'name'  => 'attribution_consumer',
-               'class' => 'Consumers::Attribution',
-               'cron'  => '*/1 * * * *',
-               'args'  => nil
-             }]
+]
 
 
 Sidekiq.configure_server do |config|
