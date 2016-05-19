@@ -22,11 +22,5 @@ module Consumers
       puts e.message
       puts e.backtrace
     end
-
-    private
-
-    def invalid_queue
-      @invalid_queue ||= RedisQueue.new($redis_pool, :url_invalid)
-    end
   end
 end

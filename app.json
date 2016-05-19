@@ -42,6 +42,9 @@
     "KAFKA_HOST": {
       "description": "Name of the kafka host"
     },
+    "TRACKING_HOST": {
+      "description": "Host for the inapp tracking events"
+    },
     "CLICK_DATABASE_URL": {
       "description": "URL to the click database"
     }

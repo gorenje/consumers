@@ -1,7 +1,7 @@
 class UrlWorker
   include Sidekiq::Worker
 
-  sidekiq_options :queue => :batch
+  sidekiq_options :queue => :url_worker
 
   attr_reader :redis_queue
 
@@ -10,11 +10,11 @@ class UrlWorker
   end
 
   def perform(batch_size)
-    urls = redis_queue.pop(batch_size).map do |str|
-      next if str.nil?
-
-    end.compact
-
+    redis_queue.jpop(batch_size).map do |hsh|
+      status,resp_code = Consumers::Request::UrlHandler.new(hsh).fire_url
+      AdtekioTracking::Events.new.
+        postback({:req => hsh.to_json, :s => status, :rc => resp_code})
+    end
   rescue Exception => e
     puts e.message
     puts e.backtrace
