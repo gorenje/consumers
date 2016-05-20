@@ -12,19 +12,21 @@ module Consumers
     end
 
     def perform
-      tstamp = Time.now
+      kafka_postback_consumer =
+        $kafka_postback.consumer(:group_id => "postback")
 
-      $kafka_postback_consumer.subscribe("inapp")
-      $kafka_postback_consumer.each_message do |message|
+      kafka_postback_consumer.subscribe("inapp")
+      kafka_postback_consumer.each_message(:loop_count => 15) do |message|
+        puts "MESSAGE OFFSET: #{message.offset}"
         event = Consumers::Kafka::PostbackEvent.new(message.value)
         next unless @listen_to_these_events.include?(event.call)
-        @redis_queue.jpush(event.generate_urls)
-        $kafka_postback_consumer.stop if (Time.now - tstamp) > 55
+        urls = event.generate_urls
+        puts "DUMPING #{urls.size} URLS TO REDIS"
+        @redis_queue.jpush(urls)
       end
-
-    rescue Exception => e
-      puts e.message
-      puts e.backtrace
+    rescue
+      puts "Preventing retries on error"
+      nil
     end
   end
 end

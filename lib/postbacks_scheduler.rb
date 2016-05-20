@@ -15,14 +15,21 @@ module Scheduler
     def perform
       started_at = Time.now
       begin
-        (10 - pending_jobs).times do
+        if pending_jobs == 0 && running_jobs == 0
           Consumers::Postbacks.perform_async
+          sleep(1) while running_jobs == 0 && pending_jobs == 0
         end
         sleep(sleep_between_execution) if sleep_between_execution > 0
       end while (Time.now - started_at) < job_life_time
     end
 
     private
+
+    def running_jobs
+      Sidekiq::Workers.new.select do |a,t,m|
+        m['payload']['class'] == 'Consumers::Postbacks'
+      end.size
+    end
 
     def pending_jobs
       Sidekiq::Stats.new.queues["postback_consumer"] || 0

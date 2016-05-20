@@ -26,7 +26,8 @@ gem 'sidekiq-cron'
 gem 'librato-metrics'
 gem 'librato-rack'
 
-gem 'ruby-kafka'
+gem 'ruby-kafka', :git => 'git@github.com:gorenje/ruby-kafka.git'
+gem 'oauth2'
 
 gem 'activerecord'
 gem 'pg'

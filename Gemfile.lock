@@ -1,3 +1,9 @@
+GIT
+  remote: git@github.com:gorenje/ruby-kafka.git
+  revision: 6f8f393533b1aa844fa465491a09daaa23769a4a
+  specs:
+    ruby-kafka (0.3.7)
+
 PATH
   remote: .gems/tracking.gem
   specs:
@@ -128,7 +134,6 @@ GEM
     redis (3.2.2)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
-    ruby-kafka (0.3.4)
     rufus-scheduler (3.2.0)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -185,6 +190,7 @@ DEPENDENCIES
   minitest
   mocha
   net-http-persistent
+  oauth2
   oj
   oj_mimic_json
   omniauth
@@ -192,7 +198,7 @@ DEPENDENCIES
   pg
   pry
   redis
-  ruby-kafka
+  ruby-kafka!
   shoulda
   sidekiq
   sidekiq-cron
