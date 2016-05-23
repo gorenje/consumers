@@ -5,5 +5,5 @@ use AuthFilter
 
 run Rack::URLMap.new(
   "/"        => Sinatra::Application.new,
-  "/sidekiq" => Sidekiq::Web
+  "/sidekiq" => SidekiqWebNoSessions
 )
