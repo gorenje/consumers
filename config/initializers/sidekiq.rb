@@ -36,9 +36,9 @@ Sidekiq.configure_server do |config|
 
   Sidekiq::Cron::Job.load_from_array cron_jobs
 
-  config.server_middleware do |chain|
-    chain.add EccrineAnalytics::ActiveRecordLocalMiddleware
-  end
+  # config.server_middleware do |chain|
+  #   chain.add EccrineAnalytics::ActiveRecordLocalMiddleware
+  # end
 end
 
 Sidekiq.configure_client do |config|
