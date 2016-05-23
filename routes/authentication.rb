@@ -18,15 +18,15 @@ get '/oauth2callback' do
 
   if ENV['ACCESS_DOMAINS'].split(/,/).any? { |a| @email =~ /@#{a}$/ } ||
       (ENV["ACCESS_EMAILS"] || "").split(",").include?(@email)
-    session[:access_token] = access_token.token
-    session[:email]        = @email
+    session[:authenticated] = true
+    session[:email]         = @email
 
     @message = "Successfully authenticated with the server"
     @access_token = session[:access_token]
     redirect '/'
   else
-    session[:access_token] = nil
-    session[:unknownemail] = @email
+    session[:authenticated] = false
+    session[:unknownemail]  = @email
     redirect '/accessdenied'
   end
 end
