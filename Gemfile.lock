@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:gorenje/ruby-kafka.git
+  remote: https://github.com/gorenje/ruby-kafka.git
   revision: 6f8f393533b1aa844fa465491a09daaa23769a4a
   specs:
     ruby-kafka (0.3.7)
