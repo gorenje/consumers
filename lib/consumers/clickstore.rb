@@ -9,8 +9,6 @@ module Consumers
     end
 
     def perform
-      Click.establish_connection(:clickdb)
-      clicks = []
       click_consumer = $kafka_clicks.consumer(:group_id => "clicks")
 
       click_consumer.subscribe("clicks")
@@ -18,14 +16,8 @@ module Consumers
         puts "MESSAGE OFFSET: #{message.offset}"
         event = Consumers::Kafka::ClickEvent.new(message.value)
         next unless @listen_to_these_events.include?(event.call)
-        # clicks << Click.new(event.to_hash)
         Click.create(event.to_hash)
       end
-
-      # puts "Dumping #{clicks.size} clicks"
-      # Click.establish_connection(:clickdb)
-      # Click.import(Click.columns.map(&:name)-["id"], clicks,
-      #              :timestamps => false)
     rescue
       puts "Preventing retries on error"
       puts $!

@@ -32,7 +32,6 @@ gem 'oauth2'
 gem 'activerecord'
 gem 'active_record_migrations'
 gem 'activerecord-postgresql-adapter'
-gem 'activerecord-import'
 gem 'pg'
 
 gem 'addressable'
