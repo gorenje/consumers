@@ -7,6 +7,7 @@ module Consumers
     attr_reader :redis_queue
 
     def initialize
+      ConsumerApp::DBConfig.establish_connection
       @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
       @listen_to_these_events = Postback.unique_events
     end

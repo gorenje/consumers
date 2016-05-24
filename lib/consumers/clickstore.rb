@@ -5,6 +5,7 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
+      ConsumerApp::DBConfig.establish_connection
       @listen_to_these_events = ["click"]
     end
 
