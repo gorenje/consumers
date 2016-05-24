@@ -14,7 +14,8 @@ module Consumers
         @meta   = CGI.parse(meta).symbolize_keys
       end
 
-      [:device, :country, :ip, :platform, :ts].each do |attr|
+      [:device, :country, :ip, :platform, :ts, :bot_name,
+       :device_name].each do |attr|
         define_method(attr) do
           (meta[attr] || []).first
         end

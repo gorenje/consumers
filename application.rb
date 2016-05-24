@@ -20,7 +20,7 @@ end
 Dir[File.join(File.dirname(__FILE__),'config', 'initializers','*.rb')].
   each { |a| require_relative a }
 
-%w[lib routes models lib/consumers lib/kafka].each do |path|
+%w[lib routes models lib/consumers lib/schedulers lib/kafka].each do |path|
   Dir[File.join(File.dirname(__FILE__), path, "*.rb")].each do |lib|
     require lib.gsub(/\.rb$/, '')
   end

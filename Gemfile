@@ -30,8 +30,11 @@ gem 'ruby-kafka', :git => 'https://github.com/gorenje/ruby-kafka.git'
 gem 'oauth2'
 
 gem 'activerecord'
-gem 'pg'
 gem 'active_record_migrations'
+gem 'activerecord-postgresql-adapter'
+gem 'activerecord-import'
+gem 'pg'
+
 gem 'addressable'
 
 gem 'erubis'

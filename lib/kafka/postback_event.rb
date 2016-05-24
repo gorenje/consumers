@@ -5,7 +5,7 @@ module Consumers
     class PostbackEvent < Consumers::Kafka::Event
       def initialize(payload)
         super(payload)
-       params[:mid] = ""
+        params[:mid] = ""
       end
 
       def revenue

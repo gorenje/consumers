@@ -18,6 +18,12 @@ cron_jobs = [
                'cron'  => '*/1 * * * *',
                'args'  => nil
              },
+             {
+               'name'  => 'clickstore_consumer_scheduler',
+               'class' => 'Scheduler::Clickstore',
+               'cron'  => '*/1 * * * *',
+               'args'  => nil
+             },
 ]
 
 Sidekiq.configure_server do |config|
