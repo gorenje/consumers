@@ -22,6 +22,7 @@ module Consumers
     rescue
       puts "Preventing retries on error"
       puts $!
+      puts $!.backtrace
       nil
     end
   end
