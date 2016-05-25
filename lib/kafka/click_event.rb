@@ -19,6 +19,14 @@ module Consumers
         DateTime.parse(attr_window_from)..DateTime.parse(attr_window_till)
       end
 
+      def is_bot?
+        !bot_name.blank?
+      end
+
+      def has_adid?
+        !idfa_comb.blank?
+      end
+
       def to_hash
         {
           "created_at"         => DateTime.parse(created_at),

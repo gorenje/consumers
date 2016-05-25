@@ -45,7 +45,7 @@
     "TRACKING_HOST": {
       "description": "Host for the inapp tracking events"
     },
-    "CLICK_DATABASE_URL": {
+    "CLICK_REDIS_URL": {
       "description": "URL to the click database"
     }
   },

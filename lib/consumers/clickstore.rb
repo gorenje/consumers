@@ -5,7 +5,7 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      ConsumerApp::DBConfig.establish_connection
+      @redis_stats = RedisClickStats.new($redis_click_pool)
       @listen_to_these_events = ["click"]
     end
 
@@ -17,7 +17,7 @@ module Consumers
         puts "MESSAGE OFFSET: #{message.offset}"
         event = Consumers::Kafka::ClickEvent.new(message.value)
         next unless @listen_to_these_events.include?(event.call)
-        Click.create(event.to_hash)
+        @redis_stats.update(event)
       end
     rescue
       puts "Preventing retries on error"

@@ -1,8 +1,4 @@
 class Postback < ActiveRecord::Base
-  def self.connection_key
-    :localdb
-  end
-
   def self.unique_events
     select("distinct event").map(&:event)
   end
