@@ -20,9 +20,8 @@ module Consumers
         @redis_stats.update(event)
       end
     rescue
-      puts "Preventing retries on error"
-      puts $!
-      puts $!.backtrace
+      puts "Preventing retries on error: #{$!}"
+      puts($!.backtrace) if $! =~ /redis/i
       nil
     end
   end

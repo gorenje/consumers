@@ -25,7 +25,8 @@ module Consumers
         @redis_queue.jpush(urls)
       end
     rescue
-      puts "Preventing retries on error"
+      puts "Preventing retries on error: #{$!}"
+      puts($!.backtrace) if $! =~ /redis/i
       nil
     end
   end
