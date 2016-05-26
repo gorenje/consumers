@@ -7,6 +7,9 @@ module Consumers
     class ConversionEvent < Consumers::Kafka::Event
       def initialize(payload)
         super(payload)
+        params[:click]        = click.click
+        params[:partner_data] = click.partner_data
+        params[:mid]          = device_id
       end
 
       def click
@@ -35,6 +38,14 @@ module Consumers
 
       def user_id
         click.user_id
+      end
+
+      def appleid
+        "MISSING"
+      end
+
+      def bundleid
+        "MISSING"
       end
 
       def network_user

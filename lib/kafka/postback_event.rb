@@ -20,6 +20,10 @@ module Consumers
         "MISSING"
       end
 
+      def device_id
+        adid || params[:mid]
+      end
+
       def android?
         platform == "android"
       end
