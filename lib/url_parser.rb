@@ -37,7 +37,7 @@ class UrlConfigParser
     @url    = postback.url_template
     @body   = postback.env["body"]
     @header = postback.env["header"]
-    @user   = postback.user_required? ? event.network_user : nil
+    @user   = postback.user_required? ? event.network_user(postback) : nil
     @netcfg = postback.netcfg
     @check  = postback.env["check"]
   end

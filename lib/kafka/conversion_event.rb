@@ -48,10 +48,11 @@ module Consumers
         "MISSING"
       end
 
-      def network_user
-        @user ||= NetworkUser.where(:nework          => network,
-                                    :user_identifier => adid,
-                                    :user_id         => user_id).first
+      def network_user(postback)
+        @user ||=
+          NetworkUser.where(:nework          => network,
+                            :user_identifier => adid,
+                            :user_id         => user_id).first
       end
 
       def postbacks

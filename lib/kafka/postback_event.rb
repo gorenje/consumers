@@ -6,6 +6,7 @@ module Consumers
       def initialize(payload)
         super(payload)
         params[:mid] = ""
+        @users = {}
       end
 
       def revenue
@@ -41,14 +42,16 @@ module Consumers
                           :user_required => false)).to_a
       end
 
-      def network_user
+      def network_user(postback)
         ## Only called if necessary and buffer the result
-        @user ||= if network.blank? && adid.blank?
-                    OpenStruct.new({})
-                  else
-                    NetworkUser.where(:nework => network,
-                                      :user_identifier => adid).first
-                  end
+        @users[postback.user_id] ||=
+          if network.blank? && adid.blank?
+            OpenStruct.new({})
+          else
+            NetworkUser.where(:nework          => network,
+                              :user_identifier => adid,
+                              :user_id         => postback.user_id).first
+          end
       end
 
       def generate_urls

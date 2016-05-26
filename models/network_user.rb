@@ -8,7 +8,7 @@ class NetworkUser < ActiveRecord::Base
                           [attr, click.params[attr.to_sym]]
                         end]
                  else
-                   { }
+                   {}
                  end
 
     NetworkUser.create(:user_identifier => click.adid || install.adid,
