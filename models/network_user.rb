@@ -5,6 +5,7 @@ class NetworkUser < ActiveRecord::Base
 
     NetworkUser.create(:user_identifier => click.adid || install.adid,
                        :network         => click.network,
+                       :user_id         => click.user_id,
                        :click_data      => click.params)
   end
 end

@@ -9,7 +9,8 @@ module Consumers
 
       [:created_at, :network, :attr_window_from, :attr_window_till,
        :campaign, :ad, :adgroup, :adid, :campaign_link_id, :click,
-       :idfa_comb,:lookup_key, :partner_data, :redirect_url].each do |attr|
+       :idfa_comb,:lookup_key, :partner_data, :redirect_url,
+       :user_id].each do |attr|
         define_method(attr) do
           (params[attr] || []).first
         end

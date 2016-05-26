@@ -33,16 +33,22 @@ module Consumers
         adid
       end
 
+      def user_id
+        click.user_id
+      end
+
       def network_user
-        @user ||= NetworkUser.where(:nework => network,
-                                    :user_identifier => adid).first
+        @user ||= NetworkUser.where(:nework          => network,
+                                    :user_identifier => adid,
+                                    :user_id         => user_id).first
       end
 
       def postbacks
         @postbacks ||=
-          Postback.where(:network       => network,
-                         :event         => call,
-                         :platform      => ["all", platform]).to_a
+          Postback.where(:network  => network,
+                         :event    => call,
+                         :user_id  => user_id,
+                         :platform => ["all", platform]).to_a
       end
 
       def generate_urls

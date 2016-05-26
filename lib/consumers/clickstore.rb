@@ -24,7 +24,7 @@ module Consumers
       end
     rescue
       puts "Preventing retries on error: #{$!}"
-      puts($!.backtrace) if $! =~ /redis/i
+      puts($!.backtrace) if $!.to_s =~ /redis/i
       nil
     end
   end

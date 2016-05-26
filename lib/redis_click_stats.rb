@@ -21,6 +21,17 @@ class RedisClickStats
     end
   end
 
+  def conversion(click_event, install_event)
+    key = "clickstats:cl:#{click_event.campaign_link_id}"
+
+    with_redis do |redis|
+      redis.pipelined do |pipe|
+        pipe.zincrby(key, 1, "conversion")
+        pipe.zincrby(key, 1, "conversion:country:#{install_event.country}")
+      end
+    end
+  end
+
   protected
 
   def with_redis

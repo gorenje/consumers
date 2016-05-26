@@ -6,6 +6,7 @@ module Consumers
 
     def initialize
       @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
+      @redis_stats            = RedisClickStats.new($redis_click_pool)
       @listen_to_these_events = ["mac"]
     end
 
@@ -22,6 +23,8 @@ module Consumers
         urls = event.generate_urls
         puts "DUMPING #{urls.size} URLS TO REDIS"
         @redis_queue.jpush(urls)
+
+        @redis_stats.conversion(event.click, event.install)
       end
     rescue
       puts "Preventing retries on error: #{$!}"
