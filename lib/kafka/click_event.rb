@@ -19,36 +19,16 @@ module Consumers
         DateTime.parse(attr_window_from)..DateTime.parse(attr_window_till)
       end
 
+      def max_age
+        DateTime.parse(attr_window_till)
+      end
+
       def is_bot?
         !bot_name.blank?
       end
 
       def has_adid?
         !idfa_comb.blank?
-      end
-
-      def to_hash
-        {
-          "created_at"         => DateTime.parse(created_at),
-          "network"            => network,
-          "campaign"           => campaign,
-          "adgroup"            => adgroup,
-          "ad"                 => ad,
-          "platform"           => platform,
-          "click"              => click,
-          "partner_data"       => partner_data,
-          "matched"            => false,
-          "adid"               => adid,
-          "idfa_comb"          => idfa_comb,
-          "attribution_window" => attribution_window,
-          "lookup_key"         => lookup_key,
-          "campaign_link_id"   => campaign_link_id,
-          "country"            => country,
-          "device_name"        => device_name,
-          "redirect_url"       => redirect_url,
-          "device_type"        => device,
-          "bot_name"           => bot_name
-        }
       end
     end
   end

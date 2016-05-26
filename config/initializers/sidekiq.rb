@@ -24,6 +24,18 @@ cron_jobs = [
                'cron'  => '*/1 * * * *',
                'args'  => nil
              },
+             {
+               'name'  => 'conversion_consumer_scheduler',
+               'class' => 'Scheduler::Conversion',
+               'cron'  => '*/1 * * * *',
+               'args'  => nil
+             },
+             {
+               'name'  => 'attribution_consumer_scheduler',
+               'class' => 'Scheduler::Attribution',
+               'cron'  => '*/1 * * * *',
+               'args'  => nil
+             },
 ]
 
 Sidekiq.configure_server do |config|

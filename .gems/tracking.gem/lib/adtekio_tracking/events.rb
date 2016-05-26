@@ -44,5 +44,9 @@ module AdtekioTracking
     def postback(params = {})
       send_request('/t/pob', params)
     end
+
+    def conversion(params = {})
+      send_request('/t/mac', params)
+    end
   end
 end

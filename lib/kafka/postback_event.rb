@@ -39,11 +39,11 @@ module Consumers
 
       def network_user
         ## Only called if necessary and buffer the result
-        #### TODO fix this, this is majorly broken.
-        @user ||= if network.blank?
+        @user ||= if network.blank? && adid.blank?
                     OpenStruct.new({})
                   else
-                    NetworkUser.where(:nework => network).first
+                    NetworkUser.where(:nework => network,
+                                      :user_identifier => adid).first
                   end
       end
 
