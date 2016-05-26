@@ -5,27 +5,32 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @redis_stats = RedisClickStats.new($redis_click_pool)
-      @redis_clickstore = RedisExpiringSet.new($redis_click_pool)
+      @redis_stats            = RedisClickStats.new($redis_click_pool)
+      @redis_clickstore       = RedisExpiringSet.new($redis_click_pool)
       @listen_to_these_events = ["click"]
     end
 
     def perform
-      consumer = $kafka.click.consumer(:group_id => "clicks")
-
-      consumer.subscribe("clicks")
-      consumer.each_message(:loop_count => 15) do |message|
-        puts "MESSAGE OFFSET (clickstore): #{message.offset}"
-        event = Consumers::Kafka::ClickEvent.new(message.value)
-        next unless @listen_to_these_events.include?(event.call)
-
-        @redis_clickstore.add_click_event(event)
-        @redis_stats.update(event)
+      $kafka.click.consumer(:group_id => "clicks").tap do |c|
+        c.subscribe("clicks")
+      end.each_message(:loop_count => 15) do |message|
+        do_work(message)
       end
     rescue
       puts "Preventing retries on error: #{$!}"
       puts($!.backtrace) if $!.to_s =~ /redis/i
       nil
+    end
+
+    protected
+
+    def do_work(message)
+      puts "MESSAGE OFFSET (clickstore): #{message.offset}"
+      event = Consumers::Kafka::ClickEvent.new(message.value)
+      return unless @listen_to_these_events.include?(event.call)
+
+      @redis_clickstore.add_click_event(event)
+      @redis_stats.update(event)
     end
   end
 end

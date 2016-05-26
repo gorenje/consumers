@@ -12,21 +12,27 @@ module Consumers
     end
 
     def perform
-      consumer = $kafka.postback.consumer(:group_id => "postback")
-
-      consumer.subscribe("inapp")
-      consumer.each_message(:loop_count => 15) do |message|
-        puts "MESSAGE OFFSET (postback): #{message.offset}"
-        event = Consumers::Kafka::PostbackEvent.new(message.value)
-        next unless @listen_to_these_events.include?(event.call)
-        urls = event.generate_urls
-        puts "DUMPING #{urls.size} URLS TO REDIS"
-        @redis_queue.jpush(urls)
+      $kafka.postback.consumer(:group_id => "postback").tap do |c|
+        c.subscribe("inapp")
+      end.each_message(:loop_count => 15) do |message|
+        do_work(message)
       end
     rescue
       puts "Preventing retries on error: #{$!}"
       puts($!.backtrace) if $! =~ /redis/i
       nil
+    end
+
+    protected
+
+    def do_work(message)
+      puts "MESSAGE OFFSET (postback): #{message.offset}"
+      event = Consumers::Kafka::PostbackEvent.new(message.value)
+      return unless @listen_to_these_events.include?(event.call)
+
+      urls = event.generate_urls
+      puts "DUMPING #{urls.size} URLS TO REDIS"
+      @redis_queue.jpush(urls)
     end
   end
 end
