@@ -30,16 +30,18 @@ module Consumers
       alias_method :call, :type
 
       def adid
-        (params[:adid] && params[:adid] != "null" &&
-         params[:adid] != "undefined" && !(params[:adid] =~ /^[0-]+$/) &&
-         params[:adid] != "" && params[:adid]) || nil
+        adid = (params[:adid] || []).first
+        (adid && adid != "null" &&
+         adid != "undefined" && !(adid =~ /^[0-]+$/) &&
+         adid != "" && adid) || nil
       end
       alias_method :idfa, :adid
 
       def gadid
-        (params[:gadid] && params[:gadid] != "null" &&
-         params[:gadid] != "undefined" && !(params[:gadid] =~ /^[0-]+$/) &&
-         params[:gadid] != "" && params[:gadid]) || nil
+        gadid = (params[:gadid] || []).first
+        (gadid && gadid != "null" &&
+         gadid != "undefined" && !(gadid =~ /^[0-]+$/) &&
+         gadid != "" && gadid) || nil
       end
 
       def gadid_has_valid_format?
@@ -47,9 +49,10 @@ module Consumers
       end
 
       def uuid
-        (params[:uuid] && params[:uuid] != "null" &&
-         params[:uuid] != "undefined" && !(params[:uuid] =~ /^[0-]+$/) &&
-         params[:uuid] != "" && params[:uuid]) || nil
+        uuid = (params[:uuid] || []).first
+        (uuid && uuid != "null" &&
+         uuid != "undefined" && !(uuid =~ /^[0-]+$/) &&
+         uuid != "" && uuid) || nil
       end
 
       def time

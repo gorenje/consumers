@@ -11,12 +11,12 @@ module Consumers
 
       def idfa_md5
         @idfa_md5_cache ||=
-          adid.present? ? Digest::MD5.hexdigest(adid.to_s) : nil
+          adid.present? ? Digest::MD5.hexdigest(adid.to_s.downcase) : nil
       end
 
       def idfa_sha1
         @idfa_sha1_cache ||=
-          adid.present? ? Digest::SHA1.hexdigest(adid.to_s) : nil
+          adid.present? ? Digest::SHA1.hexdigest(adid.to_s.downcase) : nil
       end
 
       def fingerprint
@@ -28,7 +28,7 @@ module Consumers
                           fingerprint].reject do |key|
           key.blank?
         end.map do |key|
-          Digest::MD5.hexdigest("#{key}".downcase)
+          Digest::MD5.hexdigest(key.to_s.downcase)
         end
       end
     end
