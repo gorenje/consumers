@@ -7,17 +7,21 @@ module Consumers
     class ConversionEvent < Consumers::Kafka::Event
       def initialize(payload)
         super(payload)
+
+        @click_payload = params[:click].first
+        @install_payload = params[:install].first
+
         params[:click]        = click.click
         params[:partner_data] = click.partner_data
         params[:mid]          = device_id
       end
 
       def click
-        @click ||= Consumers::Kafka::ClickEvent.new(params[:click].first)
+        @click ||= Consumers::Kafka::ClickEvent.new(@click_payload)
       end
 
       def install
-        @install ||= Consumers::Kafka::InstallEvent.new(params[:install].first)
+        @install ||= Consumers::Kafka::InstallEvent.new(@install_payload)
       end
 
       def platform
