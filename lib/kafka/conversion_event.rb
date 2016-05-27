@@ -8,20 +8,19 @@ module Consumers
       def initialize(payload)
         super(payload)
 
-        @click_payload = params[:click].first
-        @install_payload = params[:install].first
-
-        params[:click]        = click.click
-        params[:partner_data] = click.partner_data
-        params[:mid]          = device_id
+        # these can not be called since there might or might not a click
+        # and install object.
+        # params[:click]        = click.click
+        # params[:partner_data] = click.partner_data
+        # params[:mid]          = device_id
       end
 
       def click
-        @click ||= Consumers::Kafka::ClickEvent.new(@click_payload)
+        @click ||= Consumers::Kafka::ClickEvent.new(params[:click].first)
       end
 
       def install
-        @install ||= Consumers::Kafka::InstallEvent.new(@install_payload)
+        @install ||= Consumers::Kafka::InstallEvent.new(params[:install].first)
       end
 
       def platform
