@@ -4,6 +4,8 @@ module Consumers
 
     sidekiq_options :queue => :attribution_consumer
 
+    SevenDays = 7 * 24 * 60 * 60
+
     def initialize
       @redis_clickstore       = RedisExpiringSet.new($redis_click_pool)
       @listen_to_these_events = ["ist"]
@@ -29,7 +31,8 @@ module Consumers
       return unless @listen_to_these_events.include?(event.call)
 
       results = @redis_clickstore.
-        find_by_lookup_keys(event.lookup_keys, event.time - 300, event.time)
+        find_by_lookup_keys(event.lookup_keys, event.time - 300,
+                            event.time + SevenDays)
 
       unless results.empty?
         puts "FOUND MATCH"
