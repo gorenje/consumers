@@ -8,10 +8,16 @@ module Consumers
       def initialize(payload)
         @payload = payload
 
-        typestr,meta,params = @payload.split(' ')
+        typestr,@_meta,@_params = @payload.split(' ')
         @type   = typestr.split('/').last
-        @params = CGI.parse(params).symbolize_keys
-        @meta   = CGI.parse(meta).symbolize_keys
+      end
+
+      def params
+        @params ||= CGI.parse(@_params).symbolize_keys
+      end
+
+      def meta
+        @meta ||= CGI.parse(@_meta).symbolize_keys
       end
 
       [:device, :country, :ip, :platform, :ts, :bot_name,
