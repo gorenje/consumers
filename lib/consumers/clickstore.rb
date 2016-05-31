@@ -38,8 +38,9 @@ module Consumers
 
       #### TESTING
       url = {
-        :url => "https://inapp.adtek.io/t/ist?adid=ECC27E57-1605-2714-CAFE-13DC6DFB742F",
-        :body => nil, :header => nil
+        :url => "https://inapp.adtek.io/t/ist?adid=#{event.adid}",
+        :body => nil,
+        :header => {}
       }
       puts "DUMPING install URL TO REDIS (clickstore)"
       @redis_queue.jpush([url])
