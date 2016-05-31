@@ -17,7 +17,7 @@ module Consumers
     def perform
       $kafka.attribution.consumer(:group_id => "attribution").tap do |c|
         c.subscribe("inapp")
-      end.each_message(:loop_count => 15) do |message|
+      end.each_message(:loop_count => 60) do |message|
         do_work(message)
       end
     rescue
@@ -43,14 +43,14 @@ module Consumers
         click_payload = values.first
         @redis_clickstore.remove_value_from_key(key, click_payload)
 
-        # click = Consumers::Kafka::ClickEvent.new(click_payload)
-        # Postback.find_postback_for_conversion(click, "mac").
-        #   each do |postback|
-        #   NetworkUser.create_new_for_conversion(click,event,postback)
-        # end
+        click = Consumers::Kafka::ClickEvent.new(click_payload)
+        Postback.find_postback_for_conversion(click, "mac").
+          each do |postback|
+          NetworkUser.create_new_for_conversion(click,event,postback)
+        end
 
-        # AdtekioTracking::Events.new.
-        #   conversion({:click => click.payload, :install => event.payload})
+        AdtekioTracking::Events.new.
+          conversion({:click => click.payload, :install => event.payload})
       end
     end
   end

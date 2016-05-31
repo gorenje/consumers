@@ -18,7 +18,7 @@ module Consumers
     def perform
       $kafka.click.consumer(:group_id => "clicks").tap do |c|
         c.subscribe("clicks")
-      end.each_message(:loop_count => 15) do |message|
+      end.each_message(:loop_count => 60) do |message|
         do_work(message)
       end
     rescue
