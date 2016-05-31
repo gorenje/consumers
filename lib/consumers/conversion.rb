@@ -33,7 +33,7 @@ module Consumers
       return if event.params[:click].nil? or event.params[:install].nil?
 
       urls = event.generate_urls
-      puts "DUMPING #{urls.size} URLS TO REDIS"
+      puts "DUMPING #{urls.size} URLS TO REDIS (conversion)"
       @redis_queue.jpush(urls)
 
       @redis_stats.conversion(event.click, event.install)
