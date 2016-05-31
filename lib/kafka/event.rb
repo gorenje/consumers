@@ -35,6 +35,10 @@ module Consumers
 
       alias_method :call, :type
 
+      def delay_in_seconds
+        Time.now.to_i - ts.to_i
+      end
+
       def adid
         adid = (params[:adid] || []).first
         (adid && adid != "null" &&

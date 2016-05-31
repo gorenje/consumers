@@ -31,6 +31,7 @@ module Consumers
       puts "MESSAGE OFFSET (attribution): #{message.offset}"
       event = Consumers::Kafka::InstallEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
+      puts "EVENT DELAY (attribution) #{event.delay_in_seconds} seconds"
 
       results = @redis_clickstore.
         find_by_lookup_keys(event.lookup_keys, event.time - 300,

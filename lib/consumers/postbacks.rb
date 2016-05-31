@@ -31,6 +31,7 @@ module Consumers
       puts "MESSAGE OFFSET (postback): #{message.offset}"
       event = Consumers::Kafka::PostbackEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
+      puts "EVENT DELAY (postback) #{event.delay_in_seconds} seconds"
 
       urls = event.generate_urls
       puts "DUMPING #{urls.size} URLS TO REDIS"

@@ -32,6 +32,7 @@ module Consumers
       puts "MESSAGE OFFSET (clickstore): #{message.offset}"
       event = Consumers::Kafka::ClickEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
+      puts "EVENT DELAY (clickstore) #{event.delay_in_seconds} seconds"
 
       @redis_clickstore.add_click_event(event)
       @redis_stats.update(event)
