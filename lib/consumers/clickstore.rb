@@ -43,7 +43,7 @@ module Consumers
         :body => nil,
         :header => {}
       }
-      puts "DUMPING install URL TO REDIS (clickstore)"
+      # puts "DUMPING install URL TO REDIS (clickstore)"
       # @redis_queue.jpush([url])
       ##### END TESTING
     end
