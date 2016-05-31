@@ -46,7 +46,10 @@
       "description": "Host for the inapp tracking events"
     },
     "CLICK_REDIS_URL": {
-      "description": "URL to the click database"
+      "description": "URL to the click-store database"
+    },
+    "CLICK_STATS_REDIS_URL": {
+      "description": "URL to the click-statistics database. Usually the redis used for the analytics application"
     }
   },
   "addons": [
