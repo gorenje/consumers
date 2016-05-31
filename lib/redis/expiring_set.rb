@@ -17,7 +17,7 @@ class RedisExpiringSet
 
   def add_click_event(event)
     add(event.lookup_key, [event.payload], event.max_age)
-    expire!(event.lookup_key)
+#    expire!(event.lookup_key)
   end
 
   def expire!(key)
@@ -42,25 +42,15 @@ class RedisExpiringSet
   end
 
   def find_by_lookup_keys(keys, start_time, end_time)
-    keys.each do |key|
-      with_redis do |redis|
-        r = redis.zrangebyscore(key, start_time.to_i, end_time.to_i)
-        return({ key => r }) unless r.nil?
-      end
+    with_redis do |redis|
+      Hash[keys.zip(redis.pipelined do |pipe|
+                      keys.each do |key|
+                        pipe.zrangebyscore(key, start_time.to_i,
+                                           end_time.to_i) || []
+                      end
+                    end)].reject { |_,v| v.empty? }
     end
-    {}
   end
-
-  # def find_by_lookup_keys(keys, start_time, end_time)
-  #   with_redis do |redis|
-  #     Hash[keys.zip(redis.pipelined do |pipe|
-  #                     keys.each do |key|
-  #                       pipe.zrangebyscore(key, start_time.to_i,
-  #                                          end_time.to_i) || []
-  #                     end
-  #                   end)].reject { |_,v| v.empty? }
-  #   end
-  # end
 
   protected
 
