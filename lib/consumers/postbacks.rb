@@ -1,3 +1,5 @@
+require_relative 'base'
+
 module Consumers
   class Postbacks
     include Sidekiq::Worker
@@ -18,8 +20,7 @@ module Consumers
         do_work(message)
       end
     rescue
-      puts "Preventing retries on error: #{$!}"
-      puts($!.backtrace) if $! =~ /redis/i
+      handle_exception($!)
       nil
     end
 

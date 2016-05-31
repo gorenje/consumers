@@ -1,5 +1,8 @@
+require_relative 'base'
+
 module Consumers
   class Clickstore
+    include Consumers::Base
     include Sidekiq::Worker
 
     sidekiq_options :queue => :clickstore_consumer
@@ -17,8 +20,7 @@ module Consumers
         do_work(message)
       end
     rescue
-      puts "Preventing retries on error: #{$!}"
-      puts($!.backtrace) if $!.to_s =~ /redis/i
+      handle_exception($!)
       nil
     end
 
