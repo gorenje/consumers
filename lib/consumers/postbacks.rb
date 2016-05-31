@@ -2,6 +2,7 @@ require_relative 'base'
 
 module Consumers
   class Postbacks
+    include Consumers::Base
     include Sidekiq::Worker
 
     sidekiq_options :queue => :postback_consumer

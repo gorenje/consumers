@@ -2,6 +2,7 @@ require_relative 'base'
 
 module Consumers
   class Conversion
+    include Consumers::Base
     include Sidekiq::Worker
 
     sidekiq_options :queue => :conversion_consumer
