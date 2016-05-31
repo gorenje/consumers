@@ -7,7 +7,7 @@ module Scheduler
     attr_reader :redis_queue, :batch_size, :job_life_time, :sleep_between_execution
 
     def initialize(batch_size = 200, job_life_time = 58, sleep_between_execution = 1)
-      @redis_queue             = RedisQueue.new($redis_pool, :url_queue)
+      @redis_queue             = RedisQueue.new($redis.local, :url_queue)
       @batch_size              = batch_size
       @job_life_time           = job_life_time
       @sleep_between_execution = sleep_between_execution

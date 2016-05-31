@@ -10,7 +10,7 @@ module Consumers
     attr_reader :redis_queue
 
     def initialize
-      @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
+      @redis_queue            = RedisQueue.new($redis.local, :url_queue)
       @listen_to_these_events = Postback.unique_events - ["mac"]
     end
 

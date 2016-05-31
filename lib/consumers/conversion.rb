@@ -8,8 +8,8 @@ module Consumers
     sidekiq_options :queue => :conversion_consumer
 
     def initialize
-      @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
-      @redis_stats            = RedisClickStats.new($redis_click_stats_pool)
+      @redis_queue            = RedisQueue.new($redis.local, :url_queue)
+      @redis_stats            = RedisClickStats.new($redis.click_stats)
       @listen_to_these_events = ["mac"]
     end
 

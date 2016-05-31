@@ -7,7 +7,7 @@ module Consumers
     attr_reader :redis_queue
 
     def initialize
-      @redis_queue = RedisQueue.new($redis_pool, :url_queue)
+      @redis_queue = RedisQueue.new($redis.local, :url_queue)
     end
 
     def perform(batch_size)
@@ -32,7 +32,7 @@ module Consumers
     end
 
     def invalid_queue
-      @invalid_queue ||= RedisQueue.new($redis_pool, :url_invalid)
+      @invalid_queue ||= RedisQueue.new($redis.local, :url_invalid)
     end
   end
 end

@@ -8,10 +8,10 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @redis_url_queue            = RedisQueue.new($redis_pool, :url_queue)
+      @redis_url_queue        = RedisQueue.new($redis.local, :url_queue)
 
-      @redis_stats            = RedisClickStats.new($redis_click_stats_pool)
-      @redis_clickstore       = RedisExpiringSet.new($redis_click_pool)
+      @redis_stats            = RedisClickStats.new($redis.click_stats)
+      @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
       @listen_to_these_events = ["click"]
     end
 

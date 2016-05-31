@@ -3,7 +3,8 @@ get '/' do
 end
 
 get "/pingdom" do
-  $redis_pool.with do |redis|
+  ## TODO extend this to test all redis databases
+  $redis.local.with do |redis|
     redis.ping
   end
   erb "ok"

@@ -10,7 +10,7 @@ module Consumers
     SevenDays = 7 * 24 * 60 * 60
 
     def initialize
-      @redis_clickstore       = RedisExpiringSet.new($redis_click_pool)
+      @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
       @listen_to_these_events = ["ist"]
     end
 
