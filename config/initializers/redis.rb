@@ -8,9 +8,20 @@ redis_conn = proc {
   Redis.new(:url => ENV['REDISTOGO_URL'], :driver => :hiredis)
 }
 $redis_pool =
-  ConnectionPool.new(:size => (ENV['REDIS_POOL_SIZE'] || '5').to_i, &redis_conn)
+  ConnectionPool.new(:size => (ENV['REDIS_POOL_SIZE'] || '5').to_i,
+                     &redis_conn)
 
-### Click redis for storing stats and clicks for matching.
+
+### Click redis for storing click stats
+redis_click_stats_conn = proc {
+  Redis.new(:url => ENV['CLICK_STATS_REDIS_URL'], :driver => :hiredis)
+}
+$redis_click_stats_pool =
+  ConnectionPool.new(:size => (ENV['REDIS_POOL_SIZE'] || '5').to_i,
+                     &redis_click_stats_conn)
+
+
+### Click redis for storing clicks for matching.
 redis_click_conn = proc {
   Redis.new(:url => ENV['CLICK_REDIS_URL'], :driver => :hiredis)
 }

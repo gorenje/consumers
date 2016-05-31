@@ -8,9 +8,9 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
+      @redis_url_queue            = RedisQueue.new($redis_pool, :url_queue)
 
-      @redis_stats            = RedisClickStats.new($redis_click_pool)
+      @redis_stats            = RedisClickStats.new($redis_click_stats_pool)
       @redis_clickstore       = RedisExpiringSet.new($redis_click_pool)
       @listen_to_these_events = ["click"]
     end
@@ -43,8 +43,8 @@ module Consumers
         :body => nil,
         :header => {}
       }
-      # puts "DUMPING install URL TO REDIS (clickstore)"
-      # @redis_queue.jpush([url])
+      puts "DUMPING install URL TO REDIS (clickstore)"
+      @redis_url_queue.jpush([url])
       ##### END TESTING
     end
   end

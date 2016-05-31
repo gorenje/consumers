@@ -9,7 +9,7 @@ module Consumers
 
     def initialize
       @redis_queue            = RedisQueue.new($redis_pool, :url_queue)
-      @redis_stats            = RedisClickStats.new($redis_click_pool)
+      @redis_stats            = RedisClickStats.new($redis_click_stats_pool)
       @listen_to_these_events = ["mac"]
     end
 
