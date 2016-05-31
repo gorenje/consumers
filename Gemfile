@@ -39,7 +39,6 @@ gem 'addressable'
 gem 'erubis'
 gem 'uuidtools'
 
-gem 'adtekio_tracking', :path => ".gems/tracking.gem"
 gem 'net-http-persistent'
 
 group :development do

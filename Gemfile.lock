@@ -4,13 +4,6 @@ GIT
   specs:
     ruby-kafka (0.3.7)
 
-PATH
-  remote: .gems/tracking.gem
-  specs:
-    adtekio_tracking (0.0.1)
-      addressable
-      net-http-persistent
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -182,7 +175,6 @@ DEPENDENCIES
   activerecord
   activerecord-postgresql-adapter
   addressable
-  adtekio_tracking!
   dotenv
   erubis
   fakeweb
