@@ -10,6 +10,8 @@ module Consumers
     SevenDays = 7 * 24 * 60 * 60
 
     def initialize
+      @url_queue = RedisQueue.new($redis.local, :tracking_url_queue)
+
       @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
       @listen_to_these_events = ["ist"]
     end
@@ -49,8 +51,10 @@ module Consumers
           NetworkUser.create_new_for_conversion(click,event,postback)
         end
 
-        AdtekioTracking::Events.new.
-          conversion({:click => click.payload, :install => event.payload})
+        @url_queue.
+          jpush([Tracking::Event.new.
+                 conversion({:click => click.payload,
+                              :install => event.payload})])
       end
     end
   end

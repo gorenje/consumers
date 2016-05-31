@@ -8,7 +8,7 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @redis_url_queue        = RedisQueue.new($redis.local, :url_queue)
+      @url_queue = RedisQueue.new($redis.local, :tracking_url_queue)
 
       @redis_stats            = RedisClickStats.new($redis.click_stats)
       @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
@@ -38,13 +38,8 @@ module Consumers
       @redis_stats.update(event)
 
       #### TESTING
-      url = {
-        :url => "https://inapp.adtek.io/t/ist?adid=#{event.adid}",
-        :body => nil,
-        :header => {}
-      }
       puts "DUMPING install URL TO REDIS (clickstore)"
-      @redis_url_queue.jpush([url])
+      @url_queue.jpush([Tracking::Event.new.install({:adid => event.adid})])
       ##### END TESTING
     end
   end

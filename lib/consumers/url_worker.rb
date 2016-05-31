@@ -7,14 +7,18 @@ module Consumers
     attr_reader :redis_queue
 
     def initialize
-      @redis_queue = RedisQueue.new($redis.local, :url_queue)
+      @redis_queue    = RedisQueue.new($redis.local, :url_queue)
+      @tracking_queue = RedisQueue.new($redis.local, :tracking_url_queue)
     end
 
     def perform(batch_size)
       redis_queue.jpop(batch_size).map do |hsh|
         status,resp_code = Consumers::Request::UrlHandler.new(hsh).fire_url
-        AdtekioTracking::Events.new.
-          postback({:req => hsh.to_json, :s => status, :rc => resp_code})
+
+        @tracking_queue.
+          jpush([Tracking::Event.new.postback({:req => hsh.to_json,
+                                               :s   => status,
+                                               :rc  => resp_code})])
       end
     rescue Exception => e
       puts e.message

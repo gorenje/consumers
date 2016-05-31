@@ -1,1 +1,0 @@
-# Adtek.io Tracking Gem

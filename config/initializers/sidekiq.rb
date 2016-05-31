@@ -13,6 +13,12 @@ cron_jobs = [
                'args'  => nil
              },
              {
+               'name'  => 'tracking_url_worker_scheduler',
+               'class' => 'Scheduler::UrlTracking',
+               'cron'  => '*/1 * * * *',
+               'args'  => nil
+             },
+             {
                'name'  => 'postback_consumer_scheduler',
                'class' => 'Scheduler::Postbacks',
                'cron'  => '*/1 * * * *',
