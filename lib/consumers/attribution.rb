@@ -28,7 +28,7 @@ module Consumers
     protected
 
     def do_work(message)
-      puts "MESSAGE OFFSET (attribution): #{message.offset} / #{message.offset_lag} (#{message.partition})"
+      puts "MESSAGE OFFSET (attribution): #{message.offset} / (#{message.partition})"
       event = Consumers::Kafka::InstallEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
       puts "EVENT DELAY (attribution) #{event.delay_in_seconds} seconds"
