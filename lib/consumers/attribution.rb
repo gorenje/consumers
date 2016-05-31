@@ -44,10 +44,10 @@ module Consumers
         @redis_clickstore.remove_value_from_key(key, click_payload)
 
         click = Consumers::Kafka::ClickEvent.new(click_payload)
-        Postback.find_postback_for_conversion(click, "mac").
-          each do |postback|
-          NetworkUser.create_new_for_conversion(click,event,postback)
-        end
+        # Postback.find_postback_for_conversion(click, "mac").
+        #   each do |postback|
+        #   NetworkUser.create_new_for_conversion(click,event,postback)
+        # end
 
         AdtekioTracking::Events.new.
           conversion({:click => click.payload, :install => event.payload})
