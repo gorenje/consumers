@@ -5,7 +5,7 @@
     "productivity",
     "mobile advertising"
   ],
-  "website": "https://github.com/adtekio/consumers/README.md",
+  "website": "https://github.com/adtekio/consumers/blob/master/README.md",
   "repository": "https://github.com/adtekio/consumers",
   "logo": "https://avatars2.githubusercontent.com/u/17549165",
   "env": {
@@ -56,6 +56,8 @@
   "addons": [
     "papertrail",
     "redistogo",
-    "heroku-postgresql"
+    "heroku-postgresql",
+    "heroku-redis",
+    "ssl:endpoint"
   ]
 }
