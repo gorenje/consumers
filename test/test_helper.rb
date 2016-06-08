@@ -46,14 +46,14 @@ class Minitest::Test
   end
 
   def generate_postback( overrides = {})
-    Postback.create({ :network => "test",
-                      :event => "ist",
-                      :platform => "all",
-                      :user_id => 1,
+    Postback.create({ :network       => "test",
+                      :event         => "ist",
+                      :platform      => "all",
+                      :user_id       => 1,
                       :user_required => false,
-                      :store_user => false,
-                      :env => { },
-                      :url_template => "http://localhost/fubar"
+                      :store_user    => false,
+                      :env           => { },
+                      :url_template  => "http://localhost/fubar"
                     }.merge(overrides))
   end
 

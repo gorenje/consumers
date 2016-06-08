@@ -1,5 +1,3 @@
-require 'cgi'
-
 module Consumers
   module Kafka
     class Event
@@ -8,8 +6,9 @@ module Consumers
       def initialize(payload)
         @payload = payload
 
-        typestr,@_meta,@_params = @payload.split(' ')
-        @type   = typestr.split('/').last
+        typestr, @_meta, @_params = @payload.split(' ')
+
+        @type = typestr.split('/').last
       end
 
       def params
@@ -67,6 +66,24 @@ module Consumers
 
       def time
         @time ||= Time.at(ts.to_i)
+      end
+
+      def ip_dot_notation
+        int_to_ip(ip)
+      end
+
+      private
+
+      def int_to_ip(i)
+        begin
+          return IPAddr.new(i.to_i, Socket::AF_INET).to_s
+        rescue
+          begin
+            return IPAddr.new(i.to_i, Socket::AF_INET6).to_s
+          rescue
+            return "0"
+          end
+        end
       end
     end
   end
