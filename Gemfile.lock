@@ -58,6 +58,12 @@ GEM
     hetchy (1.0.0)
     hiredis (0.6.1)
     i18n (0.7.0)
+    jasmine (2.4.0)
+      jasmine-core (~> 2.4)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.4.1)
     json (1.8.3)
     jwt (1.5.1)
     kgio (2.10.0)
@@ -70,12 +76,9 @@ GEM
       librato-metrics (~> 1.6)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
-    metaclass (0.0.4)
     method_source (0.8.2)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
-    mocha (1.1.0)
-      metaclass (~> 0.0.1)
     multi_json (1.11.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -102,6 +105,7 @@ GEM
       oauth2 (~> 1.0)
       omniauth (~> 1.2)
     pg (0.18.4)
+    phantomjs (2.1.1.0)
     pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -125,10 +129,11 @@ GEM
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
     raindrops (0.16.0)
-    rake (11.1.2)
+    rake (10.5.0)
     redis (3.3.0)
     redis-namespace (1.5.2)
       redis (~> 3.0, >= 3.0.4)
+    rr (1.0.4)
     rufus-scheduler (3.2.0)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
@@ -180,10 +185,10 @@ DEPENDENCIES
   fakeweb
   foreman
   hiredis
+  jasmine
   librato-metrics
   librato-rack
   minitest
-  mocha
   net-http-persistent
   oauth2
   oj
@@ -192,7 +197,10 @@ DEPENDENCIES
   omniauth-google-oauth2
   pg
   pry
+  rack-test
+  rake (= 10.5.0)
   redis
+  rr (= 1.0.4)
   ruby-kafka!
   shoulda
   sidekiq

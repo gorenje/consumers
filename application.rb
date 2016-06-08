@@ -1,3 +1,4 @@
+require 'bundler/setup'
 require 'oj_mimic_json'
 
 require 'rack'
@@ -16,6 +17,8 @@ if File.exists?(".env")
   require 'dotenv'
   Dotenv.load
 end
+
+set(:environment,   ENV['RACK_ENV']) unless ENV['RACK_ENV'].nil?
 
 %w[config/initializers
    lib lib/consumers lib/schedulers lib/kafka lib/redis

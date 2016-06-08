@@ -49,6 +49,10 @@
     "CLICK_REDIS_URL": {
       "description": "URL to the click-store database"
     },
+    "API_SECRET_KEY": {
+      "description": "Secure the API with this key. Needs also to be set on the analytics side.",
+      "generator": "secret"
+    },
     "CLICK_STATS_REDIS_URL": {
       "description": "URL to the click-statistics database. Usually the redis used for the analytics application"
     }
