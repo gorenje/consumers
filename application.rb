@@ -12,6 +12,7 @@ require 'erb'
 require 'timeout'
 require 'ipaddr'
 require 'addressable/uri'
+require 'cgi'
 
 if File.exists?(".env")
   require 'dotenv'

@@ -20,7 +20,7 @@ module Consumers
       end
 
       def fingerprint
-        "#{ip.to_s}.#{platform.to_s}"
+        "#{ip_dot_notation}.#{platform}"
       end
 
       def lookup_keys
