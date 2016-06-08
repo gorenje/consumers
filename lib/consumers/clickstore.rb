@@ -36,11 +36,6 @@ module Consumers
 
       @redis_clickstore.add_click_event(event)
       @redis_stats.update(event)
-
-      #### TESTING
-      puts "DUMPING install URL TO REDIS (clickstore)"
-      @url_queue.jpush([Tracking::Event.new.install({:adid => event.adid})])
-      ##### END TESTING
     end
   end
 end
