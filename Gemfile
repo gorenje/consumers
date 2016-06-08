@@ -4,6 +4,7 @@ source 'http://rubygems.org'
 
 ruby '2.2.3'
 
+gem 'rake', '10.5.0'
 gem 'sinatra'
 gem 'sinatra-contrib'
 gem 'unicorn'
@@ -46,8 +47,10 @@ group :development do
 end
 
 group :test do
-  gem 'minitest'
+  gem 'rack-test'
+  gem 'rr', '1.0.4'
   gem 'shoulda'
-  gem 'mocha'
+  gem 'jasmine'
   gem 'fakeweb'
+  gem 'minitest'
 end
