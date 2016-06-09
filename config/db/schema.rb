@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160512081935) do
+ActiveRecord::Schema.define(version: 20160609141755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 20160512081935) do
     t.string   "user_identifier", limit: 64
     t.string   "network",         limit: 512
     t.integer  "user_id"
-    t.hstore   "click_data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.json     "data"
   end
 
   add_index "network_users", ["user_identifier", "user_id", "network"], name: "index_network_users_on_user_identifier_and_user_id_and_network", using: :btree

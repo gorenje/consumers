@@ -20,7 +20,7 @@ module Consumers
       end
 
       [:device, :country, :ip, :platform, :ts, :bot_name,
-       :device_name].each do |attr|
+       :device_name, :klag].each do |attr|
         define_method(attr) do
           (meta[attr] || []).first
         end

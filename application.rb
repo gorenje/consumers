@@ -21,9 +21,8 @@ end
 
 set(:environment,   ENV['RACK_ENV']) unless ENV['RACK_ENV'].nil?
 
-%w[config/initializers
-   lib lib/consumers lib/schedulers lib/kafka lib/redis
-   routes models].
+%w[config/initializers lib lib/kafka_consumers lib/schedulers
+   lib/kafka_events lib/redis models routes].
   each do |path|
   Dir[File.join(File.dirname(__FILE__), path, "*.rb")].each do |lib|
     require lib.gsub(/\.rb$/, '')

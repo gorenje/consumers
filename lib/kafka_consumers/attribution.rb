@@ -46,14 +46,14 @@ module Consumers
         @redis_clickstore.remove_value_from_key(key, click_payload)
 
         click = Consumers::Kafka::ClickEvent.new(click_payload)
-        Postback.find_postback_for_conversion(click, "mac").
+        Postback.where_we_need_to_store_user(click).
           each do |postback|
           NetworkUser.create_new_for_conversion(click,event,postback)
         end
 
         @url_queue.
           jpush([Tracking::Event.new.
-                 conversion({:click => click.payload,
+                 conversion({ :click   => click.payload,
                               :install => event.payload})])
       end
     end

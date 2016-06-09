@@ -48,7 +48,7 @@ module Consumers
           if network.blank? && adid.blank?
             OpenStruct.new({})
           else
-            NetworkUser.where(:nework          => network,
+            NetworkUser.where(:network         => network,
                               :user_identifier => adid,
                               :user_id         => postback.user_id).first
           end

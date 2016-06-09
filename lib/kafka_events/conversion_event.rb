@@ -1,18 +1,10 @@
 require_relative 'event'
-require 'digest/md5'
-require 'digest/sha1'
 
 module Consumers
   module Kafka
     class ConversionEvent < Consumers::Kafka::Event
       def initialize(payload)
         super(payload)
-
-        # these can not be called since there might or might not a click
-        # and install object.
-        # params[:click]        = click.click
-        # params[:partner_data] = click.partner_data
-        # params[:mid]          = device_id
       end
 
       def click
@@ -34,6 +26,7 @@ module Consumers
       def adid
         click.adid || install.adid
       end
+      alias_method :idfa, :adid
 
       def device_id
         adid
@@ -51,9 +44,12 @@ module Consumers
         "MISSING"
       end
 
-      def network_user(postback)
+      # this takes one argument so that UrlParser can use it. For
+      # Postback events it's necessary to pass in the postback, in this
+      # case, the user_id is attached to the event.
+      def network_user(_ = nil)
         @user ||=
-          NetworkUser.where(:nework          => network,
+          NetworkUser.where(:network         => network,
                             :user_identifier => adid,
                             :user_id         => user_id).first
       end

@@ -25,36 +25,8 @@ FakeWeb.register_uri(:post, /metrics-api.librato.com/, :status => 200)
 class Minitest::Test
   include RR::Adapters::TestUnit
 
-  def silence_is_golden
-    old_stderr,old_stdout,stdout,stderr =
-      $stderr, $stdout, StringIO.new, StringIO.new
-
-    $stdout = stdout
-    $stderr = stderr
-    result = yield
-    [result, stdout.string, stderr.string]
-  ensure
-    $stderr, $stdout = old_stderr, old_stdout
-  end
-
-  def assert_redirect_to(path, msg = nil)
-    assert(last_response.redirect?,
-           "Request was not redirect" + (msg ? " (#{msg})" : ""))
-    assert_equal('http://example.org/%s' % [path],
-                 last_response.headers["Location"],
-                 "Redirect location didn't match"+ (msg ? " (#{msg})" : ""))
-  end
-
-  def generate_postback( overrides = {})
-    Postback.create({ :network       => "test",
-                      :event         => "ist",
-                      :platform      => "all",
-                      :user_id       => 1,
-                      :user_required => false,
-                      :store_user    => false,
-                      :env           => { },
-                      :url_template  => "http://localhost/fubar"
-                    }.merge(overrides))
+  def _pry
+    binding.pry
   end
 
   def replace_in_env(changes)
@@ -70,5 +42,37 @@ class Minitest::Test
     yield
   ensure
     changes.keys.each { |key| ENV.delete(key) }
+  end
+
+  def assert_redirect_to(path, msg = nil)
+    assert(last_response.redirect?,
+           "Request was not redirect" + (msg ? " (#{msg})" : ""))
+    assert_equal('http://example.org/%s' % [path],
+                 last_response.headers["Location"],
+                 "Redirect location didn't match"+ (msg ? " (#{msg})" : ""))
+  end
+
+  def silence_is_golden
+    old_stderr,old_stdout,stdout,stderr =
+      $stderr, $stdout, StringIO.new, StringIO.new
+
+    $stdout = stdout
+    $stderr = stderr
+    result = yield
+    [result, stdout.string, stderr.string]
+  ensure
+    $stderr, $stdout = old_stderr, old_stdout
+  end
+
+  def generate_postback( overrides = {})
+    Postback.create({ :network       => "test",
+                      :event         => "ist",
+                      :platform      => "all",
+                      :user_id       => 1,
+                      :user_required => false,
+                      :store_user    => false,
+                      :env           => { },
+                      :url_template  => "http://localhost/fubar"
+                    }.merge(overrides))
   end
 end
