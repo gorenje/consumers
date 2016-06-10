@@ -33,13 +33,13 @@ class UrlConfigParser
 
   def initialize(event, postback)
     @event  = event
-    @params = event.params
+    @params = NetworkUser::WrapClickData.new(event.params)
     @url    = postback.url_template
     @body   = postback.env["body"]
     @header = postback.env["header"]
+    @check  = postback.env["check"]
     @user   = postback.user_required? ? event.network_user(postback) : nil
     @netcfg = postback.netcfg
-    @check  = postback.env["check"]
   end
 
   def valid_check?

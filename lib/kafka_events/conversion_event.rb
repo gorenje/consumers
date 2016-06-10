@@ -44,16 +44,6 @@ module Consumers
         "MISSING"
       end
 
-      # this takes one argument so that UrlParser can use it. For
-      # Postback events it's necessary to pass in the postback, in this
-      # case, the user_id is attached to the event.
-      def network_user(_ = nil)
-        @user ||=
-          NetworkUser.where(:network         => network,
-                            :user_identifier => adid,
-                            :user_id         => user_id).first
-      end
-
       def postbacks
         @postbacks ||=
           Postback.where(:network  => network,
@@ -64,7 +54,10 @@ module Consumers
 
       def generate_urls
         postbacks.map do |postback|
-          UrlConfigParser.new(self, postback).generate
+          # conversion events can't require a user, conversion events
+          # define the user (assumed to be after the postback is done)
+          next if postback.user_required?
+          UrlConfigParser.new(self.click, postback).generate
         end.compact.reject { |h| h[:url].blank? }
       end
     end

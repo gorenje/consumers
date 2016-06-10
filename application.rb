@@ -13,6 +13,7 @@ require 'timeout'
 require 'ipaddr'
 require 'addressable/uri'
 require 'cgi'
+require 'tilt/erubis'
 
 if File.exists?(".env")
   require 'dotenv'

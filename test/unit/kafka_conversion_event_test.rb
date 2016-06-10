@@ -12,7 +12,7 @@ class KafkaConversionEventTest < Minitest::Test
       "ECC27E57-1605-2714-CAFE-13DC6DFB742F%26attr_window_from"+
       "%3D2016-06-04T10%253A18%253A21%252B00%253A00%26attr_window_till"+
       "%3D2016-06-07T05%253A30%253A21%252B00%253A00%26campaign%3Dfubar"+
-      "%26campaign_link_id%3D41%26click%3D%26created_at%3D"+
+      "%26campaign_link_id%3D41%26click%3Dclickdata%26created_at%3D"+
       "2016-06-04T10%253A18%253A21%252B00%253A00%26idfa_comb%3D"+
       "ECC27E57-1605-2714-CAFE-13DC6DFB742F%26lookup_key%3D"+
       "bb0ca0283abd536a7ae2941c6cde29dd%26network%3Deccrine%26"+
@@ -22,6 +22,8 @@ class KafkaConversionEventTest < Minitest::Test
       "%26device%26device_name%26ip%3D1796505292%26klag%3D1%26platform"+
       "%3D%26ts%3D1465035505%20adid%3DECC27E57-1605-2714-CAFE-13DC6DFB742F"
     @event = Consumers::Kafka::ConversionEvent.new(payload)
+    NetworkUser.delete_all
+    Postback.delete_all
   end
 
   context "basics" do
@@ -36,27 +38,52 @@ class KafkaConversionEventTest < Minitest::Test
       assert_equal @event.idfa, @event.click.idfa
     end
 
-    should "retrieve network user" do
-      NetworkUser.delete_all
-      Postback.delete_all
+    should "generate urls" do
+      url = "https://localhost.com/conv?adid=@{event.adid}@&aid="+
+        "@{netcfg.aid}@&did=@{params[:click]}@&pkg=@{netcfg.pkg}@"
 
-      assert_nil @event.network_user
+      base_data = {
+        :network => @event.network,
+        :event   => @event.call,
+        :user_id => @event.user_id,
+        :env     => {
+          "netcfg" => {
+            "aid" => "AidDemo",
+            "pkg" => "PackageNameDemo",
+          }
+        }
+      }
 
-      pb = Postback.create(:network      => @event.network,
-                           :event        => @event.call,
-                           :user_id      => @event.user_id,
-                           :platform     => "all",
-                           :url_template => "http://google.com",
-                           :env          => {})
+      [
+       # don't select this since the platform doesn't match
+       { :platform      => @event.platform + "dontselect",
+         :url_template  => url + "&false=1",
+       },
+       # select this since the platform is 'all'
+       { :platform      => "all",
+         :url_template  => url,
+       },
+       # select this since the platform is the same as the event
+       { :platform      => @event.platform,
+         :url_template  => url + "&true=1",
+       },
+       # don't use this because it requires a user.
+       { :platform      => "all",
+         :url_template  => url + "&false=f",
+         :user_required => true
+       }
+      ].each { |overrides| generate_postback(overrides.merge(base_data)) }
 
-
-      NetworkUser.
-        create_new_for_conversion(@event.click,
-                                  @event.install,
-                                  @event.postbacks.first)
-
-      assert_equal 1, NetworkUser.count
-      assert @event.network_user
+      assert_equal 2, @event.generate_urls.count
+      assert_equal([{:url=>"https://localhost.com/conv?adid="+
+                      "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
+                      "did=clickdata&pkg=PackageNameDemo",
+                      :body=>nil, :header=>{}},
+                      {:url=>"https://localhost.com/conv?adid="+
+                        "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
+                        "did=clickdata&pkg=PackageNameDemo&true=1",
+                     :body=>nil, :header=>{}}],
+                   @event.generate_urls.sort_by { |h| h[:url] })
     end
   end
 end

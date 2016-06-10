@@ -33,29 +33,30 @@ module Consumers
 
       def postbacks
         @postbacks ||=
-          (Postback.where(:network       => network,
-                          :event         => call,
-                          :platform      => ["all", platform],
-                          :user_required => true) +
-           Postback.where(:event         => call,
-                          :platform      => ["all", platform],
-                          :user_required => false)).to_a
+          Postback.where(:event    => call,
+                         :platform => ["all", platform]).to_a
       end
 
       def network_user(postback)
-        ## Only called if necessary and buffer the result
         @users[postback.user_id] ||=
-          if network.blank? && adid.blank?
-            OpenStruct.new({})
+          if adid.blank?
+            nil
           else
-            NetworkUser.where(:network         => network,
-                              :user_identifier => adid,
-                              :user_id         => postback.user_id).first
+            NetworkUser.for_postback_and_identifier(postback,adid)
           end
+      end
+
+      def user_not_defined?(postback)
+        network_user(postback).nil?
       end
 
       def generate_urls
         postbacks.map do |postback|
+          # reject postbacks that require a user, but there
+          # isn't a user defined. This generally means that the
+          # user wasn't acquired over the corresponding network.
+          next if postback.user_required? && user_not_defined?(postback)
+
           UrlConfigParser.new(self, postback).generate
         end.compact.reject { |h| h[:url].blank? }
       end

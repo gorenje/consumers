@@ -29,6 +29,12 @@ class NetworkUser < ActiveRecord::Base
            :data            => click.click_data_for_network_user)
   end
 
+  def self.for_postback_and_identifier(postback,identifier)
+    where(:network         => postback.network,
+          :user_identifier => identifier,
+          :user_id         => postback.user_id).first
+  end
+
   def click_data
     @cd ||= WrapClickData.new(data)
   end
