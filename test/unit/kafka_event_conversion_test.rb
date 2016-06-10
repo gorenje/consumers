@@ -1,7 +1,7 @@
 # encoding: UTF-8
 require_relative '../test_helper'
 
-class KafkaConversionEventTest < Minitest::Test
+class KafkaEventConversionTest < Minitest::Test
 
   def setup
     payload =

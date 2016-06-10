@@ -1,7 +1,7 @@
 # encoding: UTF-8
 require_relative '../test_helper'
 
-class KafkaClickEventTest < Minitest::Test
+class KafkaEventClickTest < Minitest::Test
 
   def setup
     @payload ="/t/click bot_name&country=DE&device=desktop&device_name&"+

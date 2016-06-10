@@ -1,7 +1,7 @@
 # encoding: UTF-8
 require_relative '../test_helper'
 
-class KafkaPostbackEventTest < Minitest::Test
+class KafkaEventPostbackTest < Minitest::Test
 
   def setup
     @payload = "/t/ist bot_name&country=DE&device=smartphone&device_name="+
