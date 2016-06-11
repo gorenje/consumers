@@ -4,7 +4,7 @@ require_relative '../test_helper'
 class NetworkUserTest < Minitest::Test
 
   context "click_data" do
-    should "be working" do
+    should "have working wrapper class" do
       nc = NetworkUser.create( :data => {
                                  "partner_data" => nil,
                                  "campaign"     => "fubsada",

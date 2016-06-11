@@ -21,6 +21,8 @@ require 'fakeweb'
 require 'minitest/autorun'
 
 require_relative '../application.rb'
+require_relative 'redis_overrides.rb'
+require_relative 'event_payloads.rb'
 
 raise "Not Using Test Environment" if settings.environment != 'test'
 
@@ -92,19 +94,5 @@ class Minitest::Test
                       :env           => { },
                       :url_template  => "http://localhost/fubar"
                     }.merge(overrides))
-  end
-end
-
-class RedisExpiringSet
-  def clear!
-    connection_pool.with { |r| r.keys("*").each { |key| r.del(key) } }
-  end
-
-  def keys
-    connection_pool.with { |r| r.keys("*") }
-  end
-
-  def method_missing(name, *args, &block)
-    connection_pool.with { |r| r.send(name, *args) }
   end
 end

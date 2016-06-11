@@ -4,9 +4,7 @@ require_relative '../test_helper'
 class KafkaEventPostbackTest < Minitest::Test
 
   def setup
-    @payload = "/t/ist bot_name&country=DE&device=smartphone&device_name="+
-      "iPhone&ip=3160894398&klag=1&platform=ios&ts=1464712617 "+
-      "adid=ECC27E57-1605-2714-CAFE-13DC6DFB742F&device=fubar"
+    @payload = EventPayloads.install
     @event = Consumers::Kafka::PostbackEvent.new(@payload)
     NetworkUser.delete_all
     Postback.delete_all

@@ -4,15 +4,7 @@ require_relative '../test_helper'
 class KafkaEventClickTest < Minitest::Test
 
   def setup
-    @payload ="/t/click bot_name&country=DE&device=desktop&device_name&"+
-      "ip=2986884497&klag=1&platform=mac&ts=1465468519 ad=&adgroup=&adid&"+
-      "attr_window_from=2016-06-09T10%3A35%3A19%2B00%3A00&"+
-      "attr_window_till=2016-06-10T10%3A35%3A19%2B00%3A00&campaign=fubsada&"+
-      "campaign_link_id=46&click=click&created_at=2016-06-09T10%3A35%3A19"+
-      "%2B00%3A00&idfa_comb&lookup_key=1c0cdbd7358cf020ecbb9fd8d19972cf&"+
-      "network=7games&partner_data=fubar&redirect_url=https%3A%2F%2F"+
-      "play.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dadsad&"+
-      "reqparams=andmore%3Ddata%26someother%3Ddata&user_id=1"
+    @payload = EventPayloads.click
     @event = Consumers::Kafka::ClickEvent.new(@payload)
   end
 

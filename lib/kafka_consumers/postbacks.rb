@@ -34,7 +34,7 @@ module Consumers
       puts "EVENT DELAY (postback) #{event.delay_in_seconds} seconds"
 
       urls = event.generate_urls
-      puts "DUMPING #{urls.size} URLS TO REDIS"
+      puts "DUMPING #{urls.size} URLS TO REDIS (postback)"
       @redis_queue.jpush(urls)
     end
   end

@@ -10,7 +10,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     @consumer = Consumers::Postbacks.new
   end
 
-  context "storage" do
+  context "notification" do
     should "not handle mac events" do
       msg = "/t/mac m p"
       mock($kafka).postback { kafka_mock("postback", "inapp", 15, msg) }
