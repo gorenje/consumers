@@ -47,7 +47,7 @@ module Consumers
       def postbacks(cache = nil)
         @postbacks ||= if cache
                          cache[network][call][user_id.to_i]["all"] +
-                           cache[network][call][user_id.to_i][plaform]
+                           cache[network][call][user_id.to_i][platform]
                        else
                          Postback.where(:network  => network,
                                         :event    => call,
