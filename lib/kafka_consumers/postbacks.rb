@@ -12,6 +12,7 @@ module Consumers
     def initialize
       @redis_queue            = RedisQueue.new($redis.local, :url_queue)
       @listen_to_these_events = Postback.unique_events - ["mac"]
+      @postback_cache         = Postback.cache_for_postback_event
     end
 
     def perform
@@ -28,7 +29,7 @@ module Consumers
       return unless @listen_to_these_events.include?(event.call)
       $librato_queue.add("postback_delay" => event.delay_in_seconds)
 
-      urls = event.generate_urls
+      urls = event.generate_urls(@postback_cache)
       $librato_aggregator.add("postback_url_count" => urls.size)
       @redis_queue.jpush(urls)
     end

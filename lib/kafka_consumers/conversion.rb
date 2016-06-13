@@ -11,6 +11,7 @@ module Consumers
       @redis_queue            = RedisQueue.new($redis.local, :url_queue)
       @redis_stats            = RedisClickStats.new($redis.click_stats)
       @listen_to_these_events = ["mac"]
+      @postback_cache         = Postback.cache_for_conversion_event
     end
 
     def perform
@@ -29,7 +30,7 @@ module Consumers
 
       return if event.params[:click].nil? or event.params[:install].nil?
 
-      urls = event.generate_urls
+      urls = event.generate_urls(@postback_cache)
       $librato_aggregator.add("conversion_url_count" => urls.size)
       @redis_queue.jpush(urls)
 

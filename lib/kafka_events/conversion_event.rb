@@ -44,16 +44,20 @@ module Consumers
         "MISSING"
       end
 
-      def postbacks
-        @postbacks ||=
-          Postback.where(:network  => network,
-                         :event    => call,
-                         :user_id  => user_id,
-                         :platform => ["all", platform]).to_a
+      def postbacks(cache = nil)
+        @postbacks ||= if cache
+                         cache[network][call][user_id.to_i]["all"] +
+                           cache[network][call][user_id.to_i][plaform]
+                       else
+                         Postback.where(:network  => network,
+                                        :event    => call,
+                                        :user_id  => user_id,
+                                        :platform => ["all", platform]).to_a
+                       end
       end
 
-      def generate_urls
-        postbacks.map do |postback|
+      def generate_urls(cache = nil)
+        postbacks(cache).map do |postback|
           # conversion events can't require a user, conversion events
           # define the user (assumed to be after the postback is done)
           next if postback.user_required?

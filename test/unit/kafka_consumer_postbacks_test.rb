@@ -45,7 +45,8 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     should "handle apo if there are postbacks" do
       generate_postback(:url_template => "http://google.de", :event => "apo")
       assert_equal ["apo"], Postback.unique_events
-      @consumer = Consumers::Postbacks.new # update listen_to_these_events
+      # update listen_to_these_events & postback_cache
+      @consumer = Consumers::Postbacks.new
 
       msg = "/t/apo m p"
 

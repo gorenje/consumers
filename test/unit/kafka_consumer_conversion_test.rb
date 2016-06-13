@@ -80,7 +80,7 @@ class KafkaConsumerConversionTest < Minitest::Test
       mock($librato_aggregator).add("conversion_url_count" => 3)
 
       any_instance_of(Consumers::Kafka::ConversionEvent) do |o|
-        mock(o).generate_urls { [1,2,3] }
+        mock(o).generate_urls({ }) { [1,2,3] }
         mock(o).delay_in_seconds { 10 }
       end
 

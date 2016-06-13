@@ -31,10 +31,13 @@ module Consumers
 
       alias_method :trigger_stamp, :ts
 
-      def postbacks
-        @postbacks ||=
-          Postback.where(:event    => call,
-                         :platform => ["all", platform]).to_a
+      def postbacks(cache = nil)
+        @postbacks ||= if cache
+                         cache[call]["all"] + cache[call][platform]
+                       else
+                         Postback.where(:event    => call,
+                                        :platform => ["all", platform]).to_a
+                       end
       end
 
       def network_user(postback)
@@ -50,8 +53,8 @@ module Consumers
         network_user(postback).nil?
       end
 
-      def generate_urls
-        postbacks.map do |postback|
+      def generate_urls(cache = nil)
+        postbacks(cache).map do |postback|
           # reject postbacks that require a user, but there
           # isn't a user defined. This generally means that the
           # user wasn't acquired over the corresponding network.

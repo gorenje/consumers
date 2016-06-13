@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160609141755) do
+ActiveRecord::Schema.define(version: 20160613130517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(version: 20160609141755) do
     t.string  "url_template"
   end
 
-  add_index "postbacks", ["network", "event", "platform"], name: "index_postbacks_on_network_and_event_and_platform", using: :btree
+  add_index "postbacks", ["event", "platform"], name: "index_postbacks_on_event_and_platform", using: :btree
+  add_index "postbacks", ["network", "event", "user_id", "platform"], name: "index_postbacks_on_network_and_event_and_user_id_and_platform", using: :btree
 
 end
