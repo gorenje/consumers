@@ -13,7 +13,7 @@ class KafkaConsumerConversionTest < Minitest::Test
   context "perform" do
     should "call start_kafka_stream" do
       mock(@consumer).
-        start_kafka_stream(:conversion, "conversion", "inapp", 15)
+        start_kafka_stream(:conversion, "conversion", "inapp", 60)
       @consumer.perform
     end
   end

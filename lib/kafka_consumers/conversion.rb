@@ -15,7 +15,7 @@ module Consumers
     end
 
     def perform
-      start_kafka_stream(:conversion, "conversion", "inapp", 15)
+      start_kafka_stream(:conversion, "conversion", "inapp", 60)
     rescue
       handle_exception($!)
       nil
