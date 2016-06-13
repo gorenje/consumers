@@ -27,12 +27,9 @@ class KafkaConsumerClickstoreTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
-      end
+      mock($librato_queue).add("clickstore_delay" => 10).times(0)
 
-      assert_match /MESSAGE OFFSET/, stdout
-      assert_not_match /EVENT DELAY/, stdout
+      @consumer.send(:do_work, make_kafka_message(msg))
 
       assert_equal [], @clickstore.keys.sort
     end
@@ -40,12 +37,13 @@ class KafkaConsumerClickstoreTest < Minitest::Test
     should "store clicks without adid" do
       msg = EventPayloads.click
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
+      mock($librato_queue).add("clickstore_delay" => 10)
+
+      any_instance_of(Consumers::Kafka::ClickEvent) do |o|
+        mock(o).delay_in_seconds { 10 }
       end
 
-      assert_match /MESSAGE OFFSET/, stdout
-      assert_match /EVENT DELAY/, stdout
+      @consumer.send(:do_work, make_kafka_message(msg))
 
       assert @clickstore.keys.include?("1c0cdbd7358cf020ecbb9fd8d19972cf")
       assert @clickstats.keys.include?("clickstats:cl:46")

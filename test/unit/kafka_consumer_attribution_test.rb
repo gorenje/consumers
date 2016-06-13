@@ -28,13 +28,9 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
       assert_equal ["ist"], @consumer.instance_variable_get("@listen_to_these_events")
+      mock($librato_queue).add("attribution_delay" => 10).times(0)
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
-      end
-
-      assert_match /MESSAGE OFFSET/, stdout
-      assert_not_match /EVENT DELAY/, stdout
+      @consumer.send(:do_work, make_kafka_message(msg))
     end
 
     should "lookup click events but do nothing if nothing found" do
@@ -50,9 +46,13 @@ class KafkaConsumerAttributionTest < Minitest::Test
                               DateTime.parse("2016-06-07 16:36:57 +0000")) {[]}
       end
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
+      mock($librato_queue).add("attribution_delay" => 10)
+
+      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
+        mock(o).delay_in_seconds { 10 }
       end
+
+      @consumer.send(:do_work, make_kafka_message(msg))
 
       assert_equal 0, @url_queue.size
     end
@@ -77,9 +77,12 @@ class KafkaConsumerAttributionTest < Minitest::Test
       click = Consumers::Kafka::ClickEvent.new(EventPayloads.click)
       mock(Postback).where_we_need_to_store_user(anything) { [] }
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
+      mock($librato_queue).add("attribution_delay" => 10)
+      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
+        mock(o).delay_in_seconds { 10 }
       end
+
+      @consumer.send(:do_work, make_kafka_message(msg))
 
       mac_url = Tracking::Event.new.
         conversion({ :click   => EventPayloads.click,
@@ -114,9 +117,12 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
       mock(NetworkUser).create_new_for_conversion(anything,anything,ptbmk)
 
-      _,stdout,stderr = silence_is_golden do
-        @consumer.send(:do_work, make_kafka_message(msg))
+      mock($librato_queue).add("attribution_delay" => 10)
+      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
+        mock(o).delay_in_seconds { 10 }
       end
+
+      @consumer.send(:do_work, make_kafka_message(msg))
 
       mac_url = Tracking::Event.new.
         conversion({ :click   => EventPayloads.click,

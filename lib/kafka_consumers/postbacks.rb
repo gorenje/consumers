@@ -24,13 +24,12 @@ module Consumers
     protected
 
     def do_work(message)
-      puts "MESSAGE OFFSET (postback): #{message.offset}"
       event = Consumers::Kafka::PostbackEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
-      puts "EVENT DELAY (postback) #{event.delay_in_seconds} seconds"
+      $librato_queue.add("postback_delay" => event.delay_in_seconds)
 
       urls = event.generate_urls
-      puts "DUMPING #{urls.size} URLS TO REDIS (postback)"
+      $librato_aggregator.add("postback_url_count" => urls.size)
       @redis_queue.jpush(urls)
     end
   end

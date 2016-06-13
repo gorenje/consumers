@@ -26,6 +26,7 @@ class KafkaConsumerBaseTest < Minitest::Test
       orig_dollar_kafka = $kafka
       $kafka = { consumer_name => ko }
 
+      mock($librato_queue).add("name_offset" => 1)
       mock(consumer).do_work(kafka_message) {}
       consumer.start_kafka_stream(consumer_name, group_id, topic, loop_count)
 

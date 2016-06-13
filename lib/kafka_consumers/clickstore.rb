@@ -25,10 +25,9 @@ module Consumers
     protected
 
     def do_work(message)
-      puts "MESSAGE OFFSET (clickstore): #{message.offset}"
       event = Consumers::Kafka::ClickEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
-      puts "EVENT DELAY (clickstore) #{event.delay_in_seconds} seconds"
+      $librato_queue.add("clickstore_delay" => event.delay_in_seconds)
 
       @redis_clickstore.add_click_event(event)
       @redis_stats.update(event)

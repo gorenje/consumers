@@ -12,6 +12,7 @@ module Consumers
     end
 
     def perform(batch_size)
+      $librato_queue.add("url_wrk_batch_size" => batch_size)
       redis_queue.jpop(batch_size).map do |hsh|
         status,resp_code = Consumers::Request::UrlHandler.new(hsh).fire_url
 

@@ -30,7 +30,7 @@ module Consumers
       return if event.params[:click].nil? or event.params[:install].nil?
 
       urls = event.generate_urls
-      $librato_queue.add("conversion_url_count" => urls.size)
+      $librato_aggregator.add("conversion_url_count" => urls.size)
       @redis_queue.jpush(urls)
 
       @redis_stats.conversion(event.click, event.install)
