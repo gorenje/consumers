@@ -17,11 +17,7 @@ module Consumers
     end
 
     def perform
-      $kafka.attribution.consumer(:group_id => "attribution").tap do |c|
-        c.subscribe("inapp")
-      end.each_message(:loop_count => 60) do |message|
-        do_work(message)
-      end
+      start_kafka_stream(:attribution, "attribution", "inapp", 60)
     rescue
       handle_exception($!)
       nil
@@ -30,7 +26,7 @@ module Consumers
     protected
 
     def do_work(message)
-      puts "MESSAGE OFFSET (attribution): #{message.offset} / (#{message.partition})"
+      puts "MESSAGE OFFSET (attribution): #{message.offset}"
       event = Consumers::Kafka::InstallEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
       puts "EVENT DELAY (attribution) #{event.delay_in_seconds} seconds"

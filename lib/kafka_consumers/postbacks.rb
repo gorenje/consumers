@@ -15,11 +15,7 @@ module Consumers
     end
 
     def perform
-      $kafka.postback.consumer(:group_id => "postback").tap do |c|
-        c.subscribe("inapp")
-      end.each_message(:loop_count => 15) do |message|
-        do_work(message)
-      end
+      start_kafka_stream(:postback, "postback", "inapp", 15)
     rescue
       handle_exception($!)
       nil

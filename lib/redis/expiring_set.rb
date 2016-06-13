@@ -6,32 +6,28 @@ class RedisExpiringSet
     @connection_pool = connection_pool
   end
 
-  def add(key, values, time = Time.now)
-    time = time.to_i
-    with_redis do |redis|
-      redis.pipelined do
-        values.each { |value| redis.zadd key, time, value }
-      end
-    end
-  end
-
   def add_click_event(event)
     add(event.lookup_key, [event.payload], event.max_age)
 #    expire!(event.lookup_key)
   end
 
-  def expire!(key)
+  def add(key, values, time = Time.now)
+    time    = time.to_i
+    max_ttl = time - Time.now.to_i
+
     with_redis do |redis|
       redis.pipelined do
-        redis.zremrangebyscore key, 0, Time.now.to_i
-        # redis.expire @key, @expire_after
+        values.each { |value| redis.zadd key, time, value }
       end
+      redis.expire(key, max_ttl) if redis.ttl(key) < max_ttl
     end
   end
 
-  def delete!(key)
+  def expire!(key, time = Time.now)
     with_redis do |redis|
-      redis.del key
+      redis.pipelined do
+        redis.zremrangebyscore key, 0, time.to_i
+      end
     end
   end
 

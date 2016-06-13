@@ -14,11 +14,7 @@ module Consumers
     end
 
     def perform
-      $kafka.conversion.consumer(:group_id => "conversion").tap do |c|
-        c.subscribe("inapp")
-      end.each_message(:loop_count => 15) do |message|
-        do_work(message)
-      end
+      start_kafka_stream(:conversion, "conversion", "inapp", 15)
     rescue
       handle_exception($!)
       nil

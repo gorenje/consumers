@@ -10,11 +10,17 @@ class KafkaConsumerConversionTest < Minitest::Test
     @consumer = Consumers::Conversion.new
   end
 
-  context "consumer" do
+  context "perform" do
+    should "call start_kafka_stream" do
+      mock(@consumer).
+        start_kafka_stream(:conversion, "conversion", "inapp", 15)
+      @consumer.perform
+    end
+  end
+
+  context "do_work" do
     should "not handle apo events" do
       msg = "/t/apo m p"
-      mock($kafka).conversion { kafka_mock("conversion", "inapp", 15, msg) }
-
       mock(@consumer).handle_exception.times(0)
 
       any_instance_of(Consumers::Kafka::ConversionEvent) do |o|
@@ -22,7 +28,7 @@ class KafkaConsumerConversionTest < Minitest::Test
       end
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -33,7 +39,6 @@ class KafkaConsumerConversionTest < Minitest::Test
 
     should "not handle mac without install" do
       msg = EventPayloads.conversion.gsub(/[&]install=%2F.+$/,'')
-      mock($kafka).conversion { kafka_mock("conversion", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
@@ -42,7 +47,7 @@ class KafkaConsumerConversionTest < Minitest::Test
       end
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -53,7 +58,6 @@ class KafkaConsumerConversionTest < Minitest::Test
 
     should "not handle mac without click" do
       msg = EventPayloads.conversion.gsub(/ click=.+[&]install/,' install')
-      mock($kafka).conversion { kafka_mock("conversion", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
@@ -62,7 +66,7 @@ class KafkaConsumerConversionTest < Minitest::Test
       end
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -73,7 +77,6 @@ class KafkaConsumerConversionTest < Minitest::Test
 
     should "with a valid mac, do work" do
       msg = EventPayloads.conversion
-      mock($kafka).conversion { kafka_mock("conversion", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
@@ -81,8 +84,11 @@ class KafkaConsumerConversionTest < Minitest::Test
         mock(o).generate_urls { [1,2,3] }
       end
 
+      clickstats = RedisExpiringSet.new($redis.click_store)
+      clickstats.clear!
+
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -92,7 +98,7 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       assert_equal(41, Consumers::Kafka::ConversionEvent.new(msg).
                    click.campaign_link_id.to_i)
-      clickstats = RedisExpiringSet.new($redis.click_store)
+
       assert_equal([["conversion", 1.0], ["conversion:country:US", 1.0]],
                    clickstats.
                    zrange("clickstats:cl:41",0,-1, :withscores => true))

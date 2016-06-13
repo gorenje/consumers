@@ -4,12 +4,20 @@ ENV['IP']           = 'www.example.com'
 ENV['PORT']         = '9999'
 ENV['TZ']           = 'UTC'
 
+require "bundler/setup"
+
+# kinda cheating but needed if a test is called directly using ruby:
+#   ruby test/unit/...._test.rb
+if ENV['DATABASE_URL'].nil? && File.exists?(".env")
+  require 'dotenv'
+  Dotenv.load
+end
+
 ENV['DATABASE_URL']          = ENV['DATABASE_URL'] + "_test"
 ENV['REDISTOGO_URL']         = "redis://localhost:6379/15"
 ENV['CLICK_STATS_REDIS_URL'] = "redis://localhost:6379/15"
 ENV['CLICK_REDIS_URL']       = "redis://localhost:6379/15"
 
-require "bundler/setup"
 require 'rack/test'
 require 'shoulda'
 require 'rr'
@@ -35,6 +43,14 @@ class Minitest::Test
     binding.pry
   end
 
+  def assert_not_match(regexp, str, msg = nil)
+    assert !(str =~ regexp), msg
+  end
+
+  def make_kafka_message(msg)
+    OpenStruct.new({:offset => 1, :value => msg})
+  end
+
   def replace_in_env(changes)
     original_values = Hash[changes.map { |k,_| [k,ENV[k] ]}]
     changes.each { |k,v| ENV[k] = v }
@@ -50,26 +66,12 @@ class Minitest::Test
     changes.keys.each { |key| ENV.delete(key) }
   end
 
-  def assert_not_match(regexp, str, msg = nil)
-    assert !(str =~ regexp), msg
-  end
-
   def assert_redirect_to(path, msg = nil)
     assert(last_response.redirect?,
            "Request was not redirect" + (msg ? " (#{msg})" : ""))
     assert_equal('http://example.org/%s' % [path],
                  last_response.headers["Location"],
                  "Redirect location didn't match"+ (msg ? " (#{msg})" : ""))
-  end
-
-  def kafka_mock(group_id, topic, loop_count, msg)
-    kafka_message = OpenStruct.new({ :offset => 1, :value => msg })
-
-    Object.new.tap do |o|
-      mock(o).consumer(:group_id => group_id) { o }
-      mock(o).subscribe(topic)
-      mock(o).each_message(:loop_count => loop_count).yields(kafka_message)
-    end
   end
 
   def silence_is_golden

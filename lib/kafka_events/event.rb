@@ -6,6 +6,9 @@ module Consumers
       def initialize(payload)
         @payload = payload
 
+        # we purposely delay the parsing of the meta & params strings
+        # so that a consumer can reject this event if it's type doesn't
+        # match what it wants.
         typestr, @_meta, @_params = @payload.split(' ')
 
         @type = typestr.split('/').last

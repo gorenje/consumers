@@ -16,11 +16,7 @@ module Consumers
     end
 
     def perform
-      $kafka.click.consumer(:group_id => "clicks").tap do |c|
-        c.subscribe("clicks")
-      end.each_message(:loop_count => 60) do |message|
-        do_work(message)
-      end
+      start_kafka_stream(:click, "clicks", "clicks", 60)
     rescue
       handle_exception($!)
       nil

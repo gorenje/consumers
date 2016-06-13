@@ -10,15 +10,22 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     @consumer = Consumers::Postbacks.new
   end
 
-  context "notification" do
+  context "perform" do
+    should "call start_kafka_stream" do
+      mock(@consumer).
+        start_kafka_stream(:postback, "postback", "inapp", 15)
+      @consumer.perform
+    end
+  end
+
+  context "do_work" do
     should "not handle mac events" do
       msg = "/t/mac m p"
-      mock($kafka).postback { kafka_mock("postback", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -30,12 +37,11 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     should "not handle apo events if there are postbacks" do
       assert_equal [], Postback.unique_events
       msg = "/t/apo m p"
-      mock($kafka).postback { kafka_mock("postback", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
@@ -50,12 +56,11 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       @consumer = Consumers::Postbacks.new # update listen_to_these_events
 
       msg = "/t/apo m p"
-      mock($kafka).postback { kafka_mock("postback", "inapp", 15, msg) }
 
       mock(@consumer).handle_exception.times(0)
 
       _,stdout,stderr = silence_is_golden do
-        @consumer.perform
+        @consumer.send(:do_work, make_kafka_message(msg))
       end
 
       assert_match /MESSAGE OFFSET/, stdout
