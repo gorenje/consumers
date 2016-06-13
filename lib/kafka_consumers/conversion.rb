@@ -23,15 +23,14 @@ module Consumers
     protected
 
     def do_work(message)
-      puts "MESSAGE OFFSET (conversion): #{message.offset}"
       event = Consumers::Kafka::ConversionEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
-      puts "EVENT DELAY (conversion) #{event.delay_in_seconds} seconds"
+      $librato_queue.add("conversion_delay" => event.delay_in_seconds)
 
       return if event.params[:click].nil? or event.params[:install].nil?
 
       urls = event.generate_urls
-      puts "DUMPING #{urls.size} URLS TO REDIS (conversion)"
+      $librato_queue.add("conversion_url_count" => urls.size)
       @redis_queue.jpush(urls)
 
       @redis_stats.conversion(event.click, event.install)

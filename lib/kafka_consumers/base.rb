@@ -11,6 +11,7 @@ module Consumers
       $kafka[name].consumer(:group_id => group_id).tap do |c|
         [topics].flatten.each { |topic| c.subscribe(topic) }
       end.each_message(:loop_count => loop_count) do |message|
+        $librato_queue.add("#{name}_offset" => message.offset)
         do_work(message)
       end
     end
