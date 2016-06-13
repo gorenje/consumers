@@ -10,6 +10,18 @@ class KafkaEventPostbackTest < Minitest::Test
     Postback.delete_all
   end
 
+  context "cache" do
+    should "use it correctly" do
+      c = {
+        "ist" => {
+          "ios" => [1,2,3,4],
+          "all" => [5,6,7,8]
+        }
+      }
+      assert_equal [1,2,3,4,5,6,7,8], @event.postbacks(c).sort
+    end
+  end
+
   context "generate urls" do
     should "generate if no user is required" do
       url = "http://localhost.com/pix?event=landing&package_name="+

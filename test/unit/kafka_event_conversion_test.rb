@@ -10,6 +10,22 @@ class KafkaEventConversionTest < Minitest::Test
     Postback.delete_all
   end
 
+  context "use postback cache" do
+    should "use it correctly" do
+      c = {
+        "eccrine" => {
+          "mac" => {
+            2 => {
+              "" => [1,2,3,4],
+              "all" => [5,6,7,8]
+            }
+          }
+        }
+      }
+      assert_equal [1,2,3,4,5,6,7,8], @event.postbacks(c).sort
+    end
+  end
+
   context "basics" do
     should "have click and install events" do
       assert_kind_of Consumers::Kafka::InstallEvent, @event.install
