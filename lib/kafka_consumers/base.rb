@@ -15,5 +15,18 @@ module Consumers
         do_work(message)
       end
     end
+
+    def update_cache(interval, &block)
+      t = Time.now
+      if (@cache_timestamp + interval) < t
+        @cache_timestamp = t
+        yield
+      end
+    end
+
+    def initialize_cache(which_one)
+      @cache_timestamp = Time.now
+      @postback_cache  = Postback.send(which_one)
+    end
   end
 end

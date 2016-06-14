@@ -11,8 +11,8 @@ module Consumers
       @redis_queue            = RedisQueue.new($redis.local, :url_queue)
       @redis_stats            = RedisClickStats.new($redis.click_stats)
       @listen_to_these_events = ["mac"]
-      @postback_cache         = Postback.cache_for_conversion_event
-      @cache_timestamp        = Time.now
+
+      initialize_cache(:cache_for_conversion_event)
     end
 
     def perform
@@ -31,10 +31,9 @@ module Consumers
 
       return if event.params[:click].nil? or event.params[:install].nil?
 
-      if (@cache_timestamp + 300) < Time.now
+      update_cache(300) do
         $librato_queue.add("conversion_cache_update" => 1)
-        @cache_timestamp = Time.now
-        @postback_cache  = Postback.cache_for_conversion_event
+        @postback_cache = Postback.cache_for_conversion_event
       end
 
       urls = event.generate_urls(@postback_cache)

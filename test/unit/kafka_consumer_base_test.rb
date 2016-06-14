@@ -7,6 +7,29 @@ class KafkaConsumerBaseTest < Minitest::Test
     include Consumers::Base
   end
 
+  context "update cache for postback" do
+    should "have initialisation" do
+      consumer = TestConsumer.new
+
+      mock(Postback).cache_for_conversion_event { "fubar" }
+      consumer.initialize_cache(:cache_for_conversion_event)
+
+      assert_equal "fubar", consumer.instance_variable_get("@postback_cache")
+    end
+
+    should "do update if necessary" do
+      consumer = TestConsumer.new
+
+      consumer.instance_variable_set("@cache_timestamp", Time.now - 20)
+
+      consumer.update_cache(10) do
+        consumer.instance_variable_set("@postback_cache", "banana")
+      end
+
+      assert_equal "banana", consumer.instance_variable_get("@postback_cache")
+    end
+  end
+
   context "start a kafka stream" do
     should "call do_work" do
       consumer = TestConsumer.new
