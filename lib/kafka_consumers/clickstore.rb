@@ -29,7 +29,7 @@ module Consumers
     end
 
     def handle_event(event)
-      @redis_clickstore.add_click_event(event)
+#      @redis_clickstore.add_click_event(event)
     end
   end
 end

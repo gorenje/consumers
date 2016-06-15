@@ -13,7 +13,7 @@ module Consumers
 
       $kafka[name].consumer(:group_id => group_id).tap do |c|
         [topics].flatten.each { |topic| c.subscribe(topic) }
-      end.each_batch(:loop_count => loop_count) do |batch|
+      end.each_batch(:loop_count => loop_count, :max_wait_time => 2) do |batch|
         batch.messages.each do |message|
           last_good_known_message = message
           last_good_known_event = do_work(message)
