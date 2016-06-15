@@ -29,7 +29,7 @@ module Consumers
     end
 
     def done_handling_messages
-      @redis_stats.done
+      @redis_stats.flush
     end
 
     def handle_event(event)

@@ -16,9 +16,12 @@ class RedisClickStats
     @pipe_commands << [:zincrby, key, 1, "device_type:#{click_event.device}"]
     (@pipe_commands << [:zincrby, key, 1, "botclick"]) if click_event.is_bot?
     (@pipe_commands << [:zincrby, key, 1, "with_adid"]) if click_event.has_adid?
+
+    flush if @pipe_commands.size > 400
   end
 
-  def done
+  def flush
+    puts "Flushing the Redis Stats out"
     with_redis do |redis|
       redis.pipelined do |pipe|
         @pipe_commands.each do |cmd|
@@ -35,6 +38,7 @@ class RedisClickStats
     @pipe_commands << [:zincrby, key, 1, "conversion"]
     @pipe_commands << [:zincrby, key, 1,
                        "conversion:country:#{install_event.country}"]
+    flush if @pipe_commands.size > 400
   end
 
   protected
