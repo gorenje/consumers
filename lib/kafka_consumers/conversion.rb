@@ -26,9 +26,12 @@ module Consumers
 
     def do_work(message)
       event = Consumers::Kafka::ConversionEvent.new(message.value)
-      return unless @listen_to_these_events.include?(event.call)
-      $librato_queue.add("conversion_delay" => event.delay_in_seconds)
+      return(event) unless @listen_to_these_events.include?(event.call)
+      handle_event(event)
+      event
+    end
 
+    def handle_event(event)
       return if event.params[:click].nil? or event.params[:install].nil?
 
       update_cache(300) do

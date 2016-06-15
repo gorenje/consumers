@@ -35,22 +35,25 @@ class KafkaConsumerBaseTest < Minitest::Test
       consumer = TestConsumer.new
 
       kafka_message = make_kafka_message("fubar")
+      batch         = OpenStruct.new(:messages => [kafka_message])
       consumer_name = "name"
       group_id      = "group"
       topic         = "topic"
       loop_count    = "loop_count"
+      event         = OpenStruct.new(:delay_in_seconds => 30)
 
       ko = Object.new.tap do |o|
         mock(o).consumer(:group_id => group_id) { o }
         mock(o).subscribe(topic)
-        mock(o).each_message(:loop_count => loop_count).yields(kafka_message)
+        mock(o).each_batch(:loop_count => loop_count).yields(batch)
       end
 
       orig_dollar_kafka = $kafka
       $kafka = { consumer_name => ko }
 
       mock($librato_queue).add("name_offset" => 1)
-      mock(consumer).do_work(kafka_message) {}
+      mock($librato_queue).add("name_event_delay" => 30)
+      mock(consumer).do_work(kafka_message) {event}
       consumer.start_kafka_stream(consumer_name, group_id, topic, loop_count)
 
       $kafka = orig_dollar_kafka

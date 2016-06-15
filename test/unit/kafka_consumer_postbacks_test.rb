@@ -23,7 +23,6 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       msg = "/t/mac m p"
 
       mock(@consumer).handle_exception.times(0)
-      mock($librato_queue).add("postback_delay" => 1).times(0)
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
@@ -35,7 +34,6 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       msg = "/t/apo m p"
 
       mock(@consumer).handle_exception.times(0)
-      mock($librato_queue).add("postback_delay" => 1).times(0)
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
@@ -51,12 +49,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       msg = "/t/apo m p"
 
       mock(@consumer).handle_exception.times(0)
-      mock($librato_queue).add("postback_delay" => 1)
       mock($librato_aggregator).add("postback_url_count" => 1)
-
-      any_instance_of(Consumers::Kafka::PostbackEvent) do |o|
-        mock(o).delay_in_seconds { 1 }
-      end
 
       @consumer.send(:do_work, make_kafka_message(msg))
 

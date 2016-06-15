@@ -27,9 +27,12 @@ module Consumers
 
     def do_work(message)
       event = Consumers::Kafka::InstallEvent.new(message.value)
-      return unless @listen_to_these_events.include?(event.call)
-      $librato_queue.add("attribution_delay" => event.delay_in_seconds)
+      return(event) unless @listen_to_these_events.include?(event.call)
+      handle_event(event)
+      event
+    end
 
+    def handle_event(event)
       results = @redis_clickstore.
         find_by_lookup_keys(event.lookup_keys, event.time - 300,
                             event.time + SevenDays)

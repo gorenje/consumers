@@ -27,7 +27,6 @@ class KafkaConsumerConversionTest < Minitest::Test
         mock(o).generate_urls.times(0)
       end
 
-      mock($librato_queue).add("conversion_delay" => 1).times(0)
       mock($librato_aggregator).add("conversion_url_count" => 1).times(0)
 
       @consumer.send(:do_work, make_kafka_message(msg))
@@ -40,12 +39,10 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
 
-      mock($librato_queue).add("conversion_delay" => 10)
       mock($librato_aggregator).add("conversion_url_count" => 1).times(0)
 
       any_instance_of(Consumers::Kafka::ConversionEvent) do |o|
         mock(o).generate_urls.times(0)
-        mock(o).delay_in_seconds { 10 }
       end
 
       @consumer.send(:do_work, make_kafka_message(msg))
@@ -58,12 +55,10 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
 
-      mock($librato_queue).add("conversion_delay" => 10)
       mock($librato_aggregator).add("conversion_url_count" => 1).times(0)
 
       any_instance_of(Consumers::Kafka::ConversionEvent) do |o|
         mock(o).generate_urls.times(0)
-        mock(o).delay_in_seconds { 10 }
       end
 
       @consumer.send(:do_work, make_kafka_message(msg))
@@ -76,12 +71,10 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
 
-      mock($librato_queue).add("conversion_delay" => 10)
       mock($librato_aggregator).add("conversion_url_count" => 3)
 
       any_instance_of(Consumers::Kafka::ConversionEvent) do |o|
         mock(o).generate_urls({ }) { [1,2,3] }
-        mock(o).delay_in_seconds { 10 }
       end
 
       clickstats = RedisExpiringSet.new($redis.click_store)

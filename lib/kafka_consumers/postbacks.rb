@@ -27,9 +27,12 @@ module Consumers
 
     def do_work(message)
       event = Consumers::Kafka::PostbackEvent.new(message.value)
-      return unless @listen_to_these_events.include?(event.call)
-      $librato_queue.add("postback_delay" => event.delay_in_seconds)
+      return(event) unless @listen_to_these_events.include?(event.call)
+      handle_event(event)
+      event
+    end
 
+    def handle_event(event)
       update_cache(300) do
         $librato_queue.add("postback_cache_update" => 1)
         @postback_cache = Postback.cache_for_postback_event

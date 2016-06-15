@@ -28,7 +28,6 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
       mock(@consumer).handle_exception.times(0)
       assert_equal ["ist"], @consumer.instance_variable_get("@listen_to_these_events")
-      mock($librato_queue).add("attribution_delay" => 10).times(0)
 
       @consumer.send(:do_work, make_kafka_message(msg))
     end
@@ -44,12 +43,6 @@ class KafkaConsumerAttributionTest < Minitest::Test
                                "35382295a43b6abe8337fa2da486baa7"],
                               DateTime.parse("2016-05-31 16:31:57 +0000"),
                               DateTime.parse("2016-06-07 16:36:57 +0000")) {[]}
-      end
-
-      mock($librato_queue).add("attribution_delay" => 10)
-
-      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
-        mock(o).delay_in_seconds { 10 }
       end
 
       @consumer.send(:do_work, make_kafka_message(msg))
@@ -76,11 +69,6 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
       click = Consumers::Kafka::ClickEvent.new(EventPayloads.click)
       mock(Postback).where_we_need_to_store_user(anything) { [] }
-
-      mock($librato_queue).add("attribution_delay" => 10)
-      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
-        mock(o).delay_in_seconds { 10 }
-      end
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
@@ -116,11 +104,6 @@ class KafkaConsumerAttributionTest < Minitest::Test
       mock(Postback).where_we_need_to_store_user(anything) { [ptbmk] }
 
       mock(NetworkUser).create_new_for_conversion(anything,anything,ptbmk)
-
-      mock($librato_queue).add("attribution_delay" => 10)
-      any_instance_of(Consumers::Kafka::InstallEvent) do |o|
-        mock(o).delay_in_seconds { 10 }
-      end
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
