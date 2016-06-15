@@ -1,7 +1,7 @@
 class RedisClickStats
   attr_reader :connection_pool
 
-  # Since we longer update for every event and cache the commands,
+  # Since we no longer update for every event and cache the commands,
   # we could actually increment in memory and on flush just increment
   # by the aggregated values.
 
