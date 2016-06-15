@@ -1,9 +1,10 @@
-:concurrency: 15
+:concurrency: 20
 :queues:
   - default
   - [url_worker, 2]
   - [tracking_url_worker, 2]
   - [postback_consumer, 3]
   - [clickstore_consumer, 3]
+  - [clickstats_consumer, 3]
   - [conversion_consumer, 3]
   - [attribution_consumer, 3]

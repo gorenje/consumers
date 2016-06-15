@@ -7,7 +7,8 @@ opts = {
 opts[:logger].level = Logger::WARN if ENV['RACK_ENV'] == 'production'
 
 $kafka = OpenStruct.new.tap do |os|
-  ["attribution", "postback", "click", "conversion"].each do |client_id|
+  ["attribution", "postback", "click", "clickstats",
+   "conversion"].each do |client_id|
     os[client_id] = Kafka.new(opts.merge(:client_id => client_id))
   end
 end

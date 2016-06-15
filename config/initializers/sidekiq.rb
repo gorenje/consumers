@@ -31,6 +31,12 @@ cron_jobs = [
                'args'  => nil
              },
              {
+               'name'  => 'clickstats_consumer_scheduler',
+               'class' => 'Scheduler::Clickstats',
+               'cron'  => '*/1 * * * *',
+               'args'  => nil
+             },
+             {
                'name'  => 'conversion_consumer_scheduler',
                'class' => 'Scheduler::Conversion',
                'cron'  => '*/1 * * * *',
