@@ -14,7 +14,6 @@ class RedisExpiringSet
   end
 
   def flush
-    puts "Flushing the CLICK STORE"
     max_ttls = {}
     now_time = Time.now.to_i
 
@@ -37,18 +36,6 @@ class RedisExpiringSet
     end
     @cache = new_hash_cache
   end
-
-  # def add(key, values, time = Time.now)
-  #   time    = time.to_i
-  #   max_ttl = time - Time.now.to_i
-
-  #   with_redis do |redis|
-  #     redis.pipelined do
-  #       values.each { |value| redis.zadd key, time, value }
-  #     end
-  #     redis.expire(key, max_ttl) if redis.ttl(key) < max_ttl
-  #   end
-  # end
 
   def expire!(key, time = Time.now)
     with_redis do |redis|

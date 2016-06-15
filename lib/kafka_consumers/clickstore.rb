@@ -13,7 +13,7 @@ module Consumers
     end
 
     def perform
-      start_kafka_stream(:click, "clicks", "clicks", 600)
+      start_kafka_stream(:clickstore, "clicks", "clicks", 600)
     rescue
       handle_exception($!)
       nil

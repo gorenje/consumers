@@ -13,7 +13,7 @@ class KafkaConsumerClickstoreTest < Minitest::Test
   context "perform" do
     should "call start_kafka_stream" do
       mock(@consumer).
-        start_kafka_stream(:click, "clicks", "clicks", 600)
+        start_kafka_stream(:clickstore, "clicks", "clicks", 600)
       @consumer.perform
     end
   end
