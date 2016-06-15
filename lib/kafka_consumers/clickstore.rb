@@ -13,7 +13,7 @@ module Consumers
     end
 
     def perform
-      start_kafka_stream(:click, "clicks", "clicks", 60)
+      start_kafka_stream(:click, "clicks", "clicks", 600)
     rescue
       handle_exception($!)
       nil
@@ -29,7 +29,7 @@ module Consumers
     end
 
     def handle_event(event)
-#      @redis_clickstore.add_click_event(event)
+      # @redis_clickstore.add_click_event(event)
     end
   end
 end

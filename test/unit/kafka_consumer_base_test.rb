@@ -45,7 +45,8 @@ class KafkaConsumerBaseTest < Minitest::Test
       ko = Object.new.tap do |o|
         mock(o).consumer(:group_id => group_id) { o }
         mock(o).subscribe(topic)
-        mock(o).each_batch(:loop_count => loop_count).yields(batch)
+        mock(o).each_batch(:loop_count => loop_count, :max_wait_time => 0).
+          yields(batch)
       end
 
       orig_dollar_kafka = $kafka

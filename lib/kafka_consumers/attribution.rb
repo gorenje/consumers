@@ -17,7 +17,7 @@ module Consumers
     end
 
     def perform
-      start_kafka_stream(:attribution, "attribution", "inapp", 60)
+      start_kafka_stream(:attribution, "attribution", "inapp", 600)
     rescue
       handle_exception($!)
       nil

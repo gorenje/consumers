@@ -7,16 +7,13 @@ class KafkaConsumerClickstoreTest < Minitest::Test
     @clickstore = RedisExpiringSet.new($redis.click_store)
     @clickstore.clear!
 
-    @clickstats = RedisClickStats.new($redis.click_stats)
-    @clickstats.clear!
-
     @consumer = Consumers::Clickstore.new
   end
 
   context "perform" do
     should "call start_kafka_stream" do
       mock(@consumer).
-        start_kafka_stream(:click, "clicks", "clicks", 60)
+        start_kafka_stream(:click, "clicks", "clicks", 600)
       @consumer.perform
     end
   end
@@ -38,12 +35,6 @@ class KafkaConsumerClickstoreTest < Minitest::Test
       @consumer.send(:do_work, make_kafka_message(msg))
 
       assert @clickstore.keys.include?("1c0cdbd7358cf020ecbb9fd8d19972cf")
-      assert @clickstats.keys.include?("clickstats:cl:46")
-
-      assert_equal([["count", 1.0], ["country:DE", 1.0], ["device:", 1.0],
-                    ["device_type:desktop", 1.0], ["platform:mac", 1.0]],
-                   @clickstats.
-                   zrange("clickstats:cl:46",0,-1, :withscores => true))
 
       assert_equal(msg, @clickstore.
                    zrange("1c0cdbd7358cf020ecbb9fd8d19972cf",0,-1,

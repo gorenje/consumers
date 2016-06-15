@@ -13,7 +13,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
   context "perform" do
     should "call start_kafka_stream" do
       mock(@consumer).
-        start_kafka_stream(:postback, "postback", "inapp", 15)
+        start_kafka_stream(:postback, "postback", "inapp", 600)
       @consumer.perform
     end
   end

@@ -17,7 +17,7 @@ module Consumers
     end
 
     def perform
-      start_kafka_stream(:postback, "postback", "inapp", 15)
+      start_kafka_stream(:postback, "postback", "inapp", 600)
     rescue
       handle_exception($!)
       nil
