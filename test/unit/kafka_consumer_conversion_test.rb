@@ -81,6 +81,7 @@ class KafkaConsumerConversionTest < Minitest::Test
       clickstats.clear!
 
       @consumer.send(:do_work, make_kafka_message(msg))
+      @consumer.send(:done_handling_messages)
 
       assert_equal 3, @redis_queue.size
 

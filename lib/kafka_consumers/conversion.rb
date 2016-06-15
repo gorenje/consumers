@@ -31,6 +31,10 @@ module Consumers
       event
     end
 
+    def done_handling_messages
+      @redis_stats.done
+    end
+
     def handle_event(event)
       return if event.params[:click].nil? or event.params[:install].nil?
 

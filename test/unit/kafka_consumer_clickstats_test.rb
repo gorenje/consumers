@@ -33,6 +33,7 @@ class KafkaConsumerClickstatsTest < Minitest::Test
       msg = EventPayloads.click
 
       @consumer.send(:do_work, make_kafka_message(msg))
+      @consumer.send(:done_handling_messages)
 
       assert @clickstats.keys.include?("clickstats:cl:46")
 

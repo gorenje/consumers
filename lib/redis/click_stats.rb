@@ -9,8 +9,6 @@ class RedisClickStats
   def update(click_event)
     key = "clickstats:cl:#{click_event.campaign_link_id}"
 
-    # with_redis do |redis|
-    #   redis.pipelined do |pipe|
     @pipe_commands << [:zincrby, key, 1, "count"]
     @pipe_commands << [:zincrby, key, 1, "country:#{click_event.country}"]
     @pipe_commands << [:zincrby, key, 1, "platform:#{click_event.platform}"]
@@ -18,8 +16,6 @@ class RedisClickStats
     @pipe_commands << [:zincrby, key, 1, "device_type:#{click_event.device}"]
     (@pipe_commands << [:zincrby, key, 1, "botclick"]) if click_event.is_bot?
     (@pipe_commands << [:zincrby, key, 1, "with_adid"]) if click_event.has_adid?
-    #   end
-    # end
   end
 
   def done
@@ -30,17 +26,15 @@ class RedisClickStats
         end
       end
     end
+    @pipe_commands = []
   end
 
   def conversion(click_event, install_event)
     key = "clickstats:cl:#{click_event.campaign_link_id}"
 
-    with_redis do |redis|
-      redis.pipelined do |pipe|
-        pipe.zincrby(key, 1, "conversion")
-        pipe.zincrby(key, 1, "conversion:country:#{install_event.country}")
-      end
-    end
+    @pipe_commands << [:zincrby, key, 1, "conversion"]
+    @pipe_commands << [:zincrby, key, 1,
+                       "conversion:country:#{install_event.country}"]
   end
 
   protected
