@@ -1,50 +1,54 @@
 class RedisClickStats
   attr_reader :connection_pool
 
-  # Since we no longer update for every event and cache the commands,
-  # we could actually increment in memory and on flush just increment
-  # by the aggregated values.
-
   def initialize(connection_pool)
     @connection_pool = connection_pool
     @pipe_commands = []
+    @stats = new_stats_hash
   end
 
   def update(click_event)
     key = "clickstats:cl:#{click_event.campaign_link_id}"
 
-    @pipe_commands << [:zincrby, key, 1, "count"]
-    @pipe_commands << [:zincrby, key, 1, "country:#{click_event.country}"]
-    @pipe_commands << [:zincrby, key, 1, "platform:#{click_event.platform}"]
-    @pipe_commands << [:zincrby, key, 1, "device:#{click_event.device_name}"]
-    @pipe_commands << [:zincrby, key, 1, "device_type:#{click_event.device}"]
-    (@pipe_commands << [:zincrby, key, 1, "botclick"]) if click_event.is_bot?
-    (@pipe_commands << [:zincrby, key, 1, "with_adid"]) if click_event.has_adid?
+    @stats[key]["count"] += 1
+    @stats[key]["country:#{click_event.country}"]    += 1
+    @stats[key]["platform:#{click_event.platform}"]  += 1
+    @stats[key]["device:#{click_event.device_name}"] += 1
+    @stats[key]["device_type:#{click_event.device}"] += 1
 
-    flush if @pipe_commands.size > 2000
+    (@stats[key]["botclick"] += 1) if click_event.is_bot?
+    (@stats[key]["with_adid"] += 1) if click_event.has_adid?
+
+    flush if @stats.keys.size > 20
   end
 
   def flush
     with_redis do |redis|
       redis.pipelined do |pipe|
-        @pipe_commands.each do |cmd|
-          pipe.send(cmd.first, *cmd[1..-1])
+        @stats.keys.each do |key|
+          @stats[key].keys.each do |attribute|
+            pipe.zincrby(key, @stats[key][attribute], attribute)
+          end
         end
       end
     end
-    @pipe_commands = []
+    @stats = new_stats_hash
   end
 
   def conversion(click_event, install_event)
     key = "clickstats:cl:#{click_event.campaign_link_id}"
 
-    @pipe_commands << [:zincrby, key, 1, "conversion"]
-    @pipe_commands << [:zincrby, key, 1,
-                       "conversion:country:#{install_event.country}"]
-    flush if @pipe_commands.size > 2000
+    @stats[key]["conversion"] += 1
+    @stats[key]["conversion:country:#{install_event.country}"] +=1
+
+    flush if @stats.keys.size > 20
   end
 
   protected
+
+  def new_stats_hash
+    Hash.new { |h,k| h[k] = Hash.new(0) }
+  end
 
   def with_redis
     connection_pool.with do |redis|
