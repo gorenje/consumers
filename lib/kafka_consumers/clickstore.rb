@@ -8,7 +8,7 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
+      @clickstore             = RedisExpiringSet.new($redis.click_store)
       @listen_to_these_events = ["click"]
     end
 
@@ -29,7 +29,11 @@ module Consumers
     end
 
     def handle_event(event)
-      @redis_clickstore.add_click_event(event)
+      @clickstore.add_click_event(event)
+    end
+
+    def done_handling_messages
+      @clickstore.flush
     end
   end
 end

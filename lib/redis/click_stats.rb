@@ -3,8 +3,8 @@ class RedisClickStats
 
   def initialize(connection_pool)
     @connection_pool = connection_pool
-    @pipe_commands = []
-    @stats = new_stats_hash
+    @pipe_commands   = []
+    @stats           = new_stats_hash
   end
 
   def update(click_event)
@@ -22,6 +22,15 @@ class RedisClickStats
     flush if @stats.keys.size > 20
   end
 
+  def conversion(click_event, install_event)
+    key = "clickstats:cl:#{click_event.campaign_link_id}"
+
+    @stats[key]["conversion"] += 1
+    @stats[key]["conversion:country:#{install_event.country}"] +=1
+
+    flush if @stats.keys.size > 20
+  end
+
   def flush
     with_redis do |redis|
       redis.pipelined do |pipe|
@@ -33,15 +42,6 @@ class RedisClickStats
       end
     end
     @stats = new_stats_hash
-  end
-
-  def conversion(click_event, install_event)
-    key = "clickstats:cl:#{click_event.campaign_link_id}"
-
-    @stats[key]["conversion"] += 1
-    @stats[key]["conversion:country:#{install_event.country}"] +=1
-
-    flush if @stats.keys.size > 20
   end
 
   protected

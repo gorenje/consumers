@@ -25,6 +25,7 @@ class KafkaConsumerClickstoreTest < Minitest::Test
       mock(@consumer).handle_exception.times(0)
 
       @consumer.send(:do_work, make_kafka_message(msg))
+      @consumer.send(:done_handling_messages)
 
       assert_equal [], @clickstore.keys.sort
     end
@@ -33,6 +34,7 @@ class KafkaConsumerClickstoreTest < Minitest::Test
       msg = EventPayloads.click
 
       @consumer.send(:do_work, make_kafka_message(msg))
+      @consumer.send(:done_handling_messages)
 
       assert @clickstore.keys.include?("1c0cdbd7358cf020ecbb9fd8d19972cf")
 

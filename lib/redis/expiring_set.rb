@@ -4,29 +4,56 @@ class RedisExpiringSet
 
   def initialize(connection_pool)
     @connection_pool = connection_pool
+    @cache = new_hash_cache
   end
 
   def add_click_event(event)
-    add(event.lookup_key, [event.payload], event.max_age)
+    @cache[event.lookup_key][event.payload] = event.max_age
 #    expire!(event.lookup_key)
+    flush if cache_full?
   end
 
-  def add(key, values, time = Time.now)
-    time    = time.to_i
-    max_ttl = time - Time.now.to_i
+  def flush
+    puts "Flushing the CLICK STORE"
+    max_ttls = {}
+    now_time = Time.now.to_i
 
     with_redis do |redis|
-      redis.pipelined do
-        values.each { |value| redis.zadd key, time, value }
+      redis.pipelined do |pipe|
+        @cache.keys.each do |key|
+          max_ttls[key] = []
+          @cache[key].keys.each do |payload|
+            time = @cache[key][payload].to_i
+            max_ttls[key] << (time - now_time)
+            pipe.zadd key, time, payload
+          end
+        end
       end
-      redis.expire(key, max_ttl) if redis.ttl(key) < max_ttl
+
+      max_ttls.keys.each do |key|
+        m = max_ttls[key].max
+        redis.expire(key, m) if redis.ttl(key) < m
+      end
     end
+    @cache = new_hash_cache
   end
+
+  # def add(key, values, time = Time.now)
+  #   time    = time.to_i
+  #   max_ttl = time - Time.now.to_i
+
+  #   with_redis do |redis|
+  #     redis.pipelined do
+  #       values.each { |value| redis.zadd key, time, value }
+  #     end
+  #     redis.expire(key, max_ttl) if redis.ttl(key) < max_ttl
+  #   end
+  # end
 
   def expire!(key, time = Time.now)
     with_redis do |redis|
-      redis.pipelined do
-        redis.zremrangebyscore key, 0, time.to_i
+      redis.pipelined do |pipe|
+        pipe.zremrangebyscore key, 0, time.to_i
       end
     end
   end
@@ -49,6 +76,15 @@ class RedisExpiringSet
   end
 
   protected
+
+  def cache_full?
+    @cache.keys.size > 200 ||
+      (@cache.keys.map{ |k| @cache[k].keys.size }).sum > 200
+  end
+
+  def new_hash_cache
+    Hash.new { |h,k| h[k] = Hash.new(0) }
+  end
 
   def with_redis
     connection_pool.with do |redis|
