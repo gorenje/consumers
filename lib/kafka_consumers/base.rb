@@ -8,14 +8,18 @@ module Consumers
     end
 
     def start_kafka_stream(name, group_id, topics, loop_count)
+      last_good_known_message = OpenStruct.new(:offset => -1)
+
       $kafka[name].consumer(:group_id => group_id).tap do |c|
         [topics].flatten.each { |topic| c.subscribe(topic) }
       end.each_batch(:loop_count => loop_count) do |batch|
         batch.messages.each do |message|
-          $librato_queue.add("#{name}_offset" => message.offset)
+          last_good_known_message = message
           do_work(message)
         end
       end
+
+      $librato_queue.add("#{name}_offset" => last_good_known_message.offset)
     end
 
     def update_cache(interval, &block)

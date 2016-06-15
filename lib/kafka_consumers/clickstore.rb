@@ -27,7 +27,7 @@ module Consumers
     def do_work(message)
       event = Consumers::Kafka::ClickEvent.new(message.value)
       return unless @listen_to_these_events.include?(event.call)
-      $librato_queue.add("clickstore_delay" => event.delay_in_seconds)
+      # $librato_queue.add("clickstore_delay" => event.delay_in_seconds)
 
       # @redis_clickstore.add_click_event(event)
       # @redis_stats.update(event)
