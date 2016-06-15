@@ -10,8 +10,7 @@ module Consumers
     def start_kafka_stream(name, group_id, topics, loop_count)
       $kafka[name].consumer(:group_id => group_id).tap do |c|
         [topics].flatten.each { |topic| c.subscribe(topic) }
-      end.each_batch(:loop_count => loop_count) do |batches|
-        batches.each do |batch|
+      end.each_batch(:loop_count => loop_count) do |batch|
           batch.messages.each do |message|
             $librato_queue.add("#{name}_offset" => message.offset)
             do_work(message)
