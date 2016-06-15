@@ -29,8 +29,8 @@ module Consumers
       return unless @listen_to_these_events.include?(event.call)
       $librato_queue.add("clickstore_delay" => event.delay_in_seconds)
 
-      @redis_clickstore.add_click_event(event)
-      @redis_stats.update(event)
+      # @redis_clickstore.add_click_event(event)
+      # @redis_stats.update(event)
     end
   end
 end
