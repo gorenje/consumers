@@ -11,6 +11,8 @@ module Consumers
       last_good_known_message = OpenStruct.new(:offset => -1)
       last_good_known_event = OpenStruct.new(:delay_in_seconds => -1)
 
+      begin_handling_messages
+
       $kafka[name].consumer(:group_id => group_id).tap do |c|
         [topics].flatten.each { |topic| c.subscribe(topic) }
       end.each_batch(:loop_count => loop_count, :max_wait_time => 0) do |batch|
@@ -19,6 +21,8 @@ module Consumers
           last_good_known_event = do_work(message)
         end
       end
+
+      done_handling_messages
 
       $librato_queue.
         add("#{name}_event_delay" => last_good_known_event.delay_in_seconds)
@@ -36,6 +40,12 @@ module Consumers
     def initialize_cache(which_one)
       @cache_timestamp = Time.now
       @postback_cache  = Postback.send(which_one)
+    end
+
+    def begin_handling_messages
+    end
+
+    def done_handling_messages
     end
   end
 end

@@ -28,8 +28,12 @@ module Consumers
       event
     end
 
+    def done_handling_messages
+      @redis_stats.done
+    end
+
     def handle_event(event)
-#      @redis_stats.update(event)
+      @redis_stats.update(event)
     end
   end
 end
