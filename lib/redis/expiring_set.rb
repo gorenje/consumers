@@ -78,8 +78,8 @@ class RedisExpiringSet
   protected
 
   def cache_full?
-    @cache.keys.size > 200 ||
-      (@cache.keys.map{ |k| @cache[k].keys.size }).sum > 200
+    @cache.keys.size > 400 ||
+      (@cache.keys.map{ |k| @cache[k].keys.size }).sum > 400
   end
 
   def new_hash_cache

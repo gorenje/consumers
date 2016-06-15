@@ -14,13 +14,13 @@ class RedisExpiringSetTest < Minitest::Test
       # add_click_event will call flush
       mock(@clickstore).flush {}
 
-      201.times do |idx|
+      401.times do |idx|
         @clickstore.
           add_click_event(OpenStruct.new(:lookup_key => idx,
                                          :payload    => "",
                                          :max_age    => Time.now))
       end
-      assert_equal 201, @clickstore.instance_variable_get("@cache").keys.size
+      assert_equal 401, @clickstore.instance_variable_get("@cache").keys.size
       assert @clickstore.send(:cache_full?)
     end
 
@@ -29,14 +29,14 @@ class RedisExpiringSetTest < Minitest::Test
       # add_click_event will call flush
       mock(@clickstore).flush {}
 
-      201.times do |idx|
+      401.times do |idx|
         @clickstore.
           add_click_event(OpenStruct.new(:lookup_key => "samekey",
                                          :payload    => idx,
                                          :max_age    => Time.now))
       end
       assert_equal 1, @clickstore.instance_variable_get("@cache").keys.size
-      assert_equal(201, @clickstore.
+      assert_equal(401, @clickstore.
                    instance_variable_get("@cache")["samekey"].keys.size)
       assert @clickstore.send(:cache_full?)
     end
