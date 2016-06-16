@@ -7,11 +7,17 @@ class Postback < ActiveRecord::Base
     OpenStruct.new(env["netcfg"] || {})
   end
 
-  def self.where_we_need_to_store_user(click)
-    Postback.where(:network    => click.network,
-                   :user_id    => click.user_id,
-                   :event      => "mac",
-                   :store_user => true)
+  def self.cache_for_attribution_consumer
+    Hash.new do |h,k|
+      h[k] = Hash.new do |h1,k1|
+        h1[k1] = []
+      end
+    end.tap do |cache|
+      Postback.where(:event      => "mac",
+                     :store_user => true).each do |pb|
+        cache[pb.network][pb.user_id] << pb
+      end
+    end
   end
 
   def self.cache_for_postback_event

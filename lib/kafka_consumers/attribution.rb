@@ -13,6 +13,9 @@ module Consumers
       @url_queue        = RedisQueue.new($redis.local, :tracking_url_queue)
       @redis_clickstore = RedisExpiringSet.new($redis.click_store)
       handle_these_events(["ist"])
+      initialize_cache do
+        Postback.cache_for_attribution_consumer
+      end
     end
 
     def perform
@@ -42,9 +45,13 @@ module Consumers
         click_payload = values.first
         @redis_clickstore.remove_value_from_key(key, click_payload)
 
+        update_cache(300) do
+          $librato_queue.add("attribution_cache_update" => 1)
+          Postback.cache_for_attribution_consumer
+        end
+
         click = Consumers::Kafka::ClickEvent.new(click_payload)
-        Postback.where_we_need_to_store_user(click).
-          each do |postback|
+        cache[click.network][click.user_id.to_i].each do |postback|
           NetworkUser.create_new_for_conversion(click,event,postback)
         end
 

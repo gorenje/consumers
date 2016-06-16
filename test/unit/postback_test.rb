@@ -21,6 +21,43 @@ class PostbackTest < Minitest::Test
       map(&:url_template).map(&:to_i).sort
   end
 
+  context "cache for attribution consumer" do
+    should "create a correct cache" do
+      [
+       hpb("mac", "all",     1, "fubar", "1"),
+       hpb("ist", "all",     1, "snafu", "2"),
+       hpb("mac", "ios",     1, "fubar", "3"),
+       hpb("ist", "ios",     1, "fubar", "4"),
+       hpb("ist", "ios",     1, "snafu", "5"),
+       hpb("mac", "all",     2, "fubar", "6"),
+       hpb("mac", "all",     2, "fubar", "7"),
+       hpb("mac", "all",     2, "snafu", "8"),
+       hpb("apo", "ios",     2, "fubar", "9"),
+       hpb("mac", "ios",     3, "snafu", "10"),
+       hpb("apo", "all",     3, "fubar", "11"),
+       hpb("mac", "android", 4, "fubar", "12"),
+       hpb("mac", "android", 4, "snafu", "13"),
+       hpb("fun", "android", 4, "fubar", "14"),
+       hpb("ist", "ios",     1, "fubar", "15"),
+      ].each { |data| generate_postback(data.merge(:store_user => true)) }
+
+      assert_equal 15, Postback.count
+      cache = Postback.cache_for_attribution_consumer
+
+      assert_equal [], cache["unknown"][2]
+
+      assert_equal [1,3], cache["fubar"][1].map(&:url_template).map(&:to_i).sort
+      assert_equal [6,7], cache["fubar"][2].map(&:url_template).map(&:to_i).sort
+      assert_equal [], cache["fubar"][3].map(&:url_template).map(&:to_i).sort
+      assert_equal [12], cache["fubar"][4].map(&:url_template).map(&:to_i).sort
+
+      assert_equal [], cache["snafu"][1].map(&:url_template).map(&:to_i).sort
+      assert_equal [8], cache["snafu"][2].map(&:url_template).map(&:to_i).sort
+      assert_equal [10], cache["snafu"][3].map(&:url_template).map(&:to_i).sort
+      assert_equal [13], cache["snafu"][4].map(&:url_template).map(&:to_i).sort
+    end
+  end
+
   context "cache for conversion event" do
     should "create one and support cache mis-hits" do
       [

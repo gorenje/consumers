@@ -7,10 +7,13 @@ class KafkaConsumerAttributionTest < Minitest::Test
     @url_queue = RedisQueue.new($redis.local, :tracking_url_queue)
     @url_queue.clear!
 
+    Postback.delete_all
     @consumer = Consumers::Attribution.new
+
     @clickstore = RedisExpiringSet.new($redis.click_store)
-    NetworkUser.delete_all
     @clickstore.clear!
+
+    NetworkUser.delete_all
   end
 
   context "perform" do
@@ -68,8 +71,8 @@ class KafkaConsumerAttributionTest < Minitest::Test
       end
 
       click = Consumers::Kafka::ClickEvent.new(EventPayloads.click)
-      mock(Postback).where_we_need_to_store_user(anything) { [] }
 
+      assert_equal({}, @consumer.cache)
       @consumer.send(:do_work, make_kafka_message(msg))
 
       mac_url = Tracking::Event.new.
@@ -83,6 +86,11 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
     should "lookup click event, trigger mac call, and store user" do
       msg = EventPayloads.install
+
+      ptbmk = generate_postback(:user_id => "1", :network => "7games",
+                        :store_user => true, :event => "mac")
+      @consumer = Consumers::Attribution.new # regenerate cache
+      assert_equal({"7games"=>{1=>[ptbmk]}}, @consumer.cache)
 
       any_instance_of(RedisExpiringSet) do |o|
         mock(o).
@@ -99,9 +107,6 @@ class KafkaConsumerAttributionTest < Minitest::Test
       end
 
       click = Consumers::Kafka::ClickEvent.new(EventPayloads.click)
-
-      ptbmk = Object.new
-      mock(Postback).where_we_need_to_store_user(anything) { [ptbmk] }
 
       mock(NetworkUser).create_new_for_conversion(anything,anything,ptbmk)
 
