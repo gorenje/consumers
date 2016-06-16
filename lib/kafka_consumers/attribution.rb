@@ -10,10 +10,9 @@ module Consumers
     SevenDays = 7 * 24 * 60 * 60
 
     def initialize
-      @url_queue = RedisQueue.new($redis.local, :tracking_url_queue)
-
-      @redis_clickstore       = RedisExpiringSet.new($redis.click_store)
-      @listen_to_these_events = ["ist"]
+      @url_queue        = RedisQueue.new($redis.local, :tracking_url_queue)
+      @redis_clickstore = RedisExpiringSet.new($redis.click_store)
+      handle_these_events(["ist"])
     end
 
     def perform
@@ -26,10 +25,9 @@ module Consumers
     protected
 
     def do_work(message)
-      event = Consumers::Kafka::InstallEvent.new(message.value)
-      return(event) unless @listen_to_these_events.include?(event.call)
-      handle_event(event)
-      event
+      Consumers::Kafka::InstallEvent.new(message.value).tap do |event|
+        handle_event(event)
+      end
     end
 
     def handle_event(event)

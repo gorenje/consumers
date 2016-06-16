@@ -8,11 +8,13 @@ module Consumers
     sidekiq_options :queue => :conversion_consumer
 
     def initialize
-      @redis_queue            = RedisQueue.new($redis.local, :url_queue)
-      @redis_stats            = RedisClickStats.new($redis.click_stats)
-      @listen_to_these_events = ["mac"]
+      @redis_queue = RedisQueue.new($redis.local, :url_queue)
+      @redis_stats = RedisClickStats.new($redis.click_stats)
 
-      initialize_cache(:cache_for_conversion_event)
+      handle_these_events(["mac"])
+      initialize_cache do
+        Postback.cache_for_conversion_event
+      end
     end
 
     def perform
@@ -25,14 +27,9 @@ module Consumers
     protected
 
     def do_work(message)
-      event = Consumers::Kafka::ConversionEvent.new(message.value)
-      return(event) unless @listen_to_these_events.include?(event.call)
-      handle_event(event)
-      event
-    end
-
-    def done_handling_messages
-      @redis_stats.flush
+      Consumers::Kafka::ConversionEvent.new(message.value).tap do |event|
+        handle_event(event)
+      end
     end
 
     def handle_event(event)
@@ -40,14 +37,18 @@ module Consumers
 
       update_cache(300) do
         $librato_queue.add("conversion_cache_update" => 1)
-        @postback_cache = Postback.cache_for_conversion_event
+        Postback.cache_for_conversion_event
       end
 
-      urls = event.generate_urls(@postback_cache)
+      urls = event.generate_urls(cache)
       $librato_aggregator.add("conversion_url_count" => urls.size)
-      @redis_queue.jpush(urls)
 
+      @redis_queue.jpush(urls)
       @redis_stats.conversion(event.click, event.install)
+    end
+
+    def done_handling_messages
+      @redis_stats.flush
     end
   end
 end

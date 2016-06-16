@@ -8,8 +8,8 @@ module Consumers
     sidekiq_options :queue => :clickstore_consumer
 
     def initialize
-      @clickstore             = RedisExpiringSet.new($redis.click_store)
-      @listen_to_these_events = ["click"]
+      @clickstore = RedisExpiringSet.new($redis.click_store)
+      handle_these_events(["click"])
     end
 
     def perform
@@ -22,10 +22,9 @@ module Consumers
     protected
 
     def do_work(message)
-      event = Consumers::Kafka::ClickEvent.new(message.value)
-      return(event) unless @listen_to_these_events.include?(event.call)
-      handle_event(event)
-      event
+      Consumers::Kafka::ClickEvent.new(message.value).tap do |event|
+        handle_event(event)
+      end
     end
 
     def handle_event(event)

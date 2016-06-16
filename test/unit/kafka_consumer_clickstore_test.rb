@@ -19,17 +19,6 @@ class KafkaConsumerClickstoreTest < Minitest::Test
   end
 
   context "do_work" do
-    should "not handle non-click events" do
-      msg = "/t/notclick m p"
-
-      mock(@consumer).handle_exception.times(0)
-
-      @consumer.send(:do_work, make_kafka_message(msg))
-      @consumer.send(:done_handling_messages)
-
-      assert_equal [], @clickstore.keys.sort
-    end
-
     should "store clicks without adid" do
       msg = EventPayloads.click
 
