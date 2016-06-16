@@ -50,15 +50,15 @@ module Consumers
           Postback.cache_for_attribution_consumer
         end
 
-        click = Consumers::Kafka::ClickEvent.new(click_payload)
-        cache[click.network][click.user_id.to_i].each do |postback|
-          NetworkUser.create_new_for_conversion(click,event,postback)
-        end
+        # click = Consumers::Kafka::ClickEvent.new(click_payload)
+        # cache[click.network][click.user_id.to_i].each do |postback|
+        #   NetworkUser.create_new_for_conversion(click,event,postback)
+        # end
 
-        @url_queue.
-          jpush([Tracking::Event.new.
-                 conversion({ :click   => click.payload,
-                              :install => event.payload})])
+        # @url_queue.
+        #   jpush([Tracking::Event.new.
+        #          conversion({ :click   => click.payload,
+        #                       :install => event.payload})])
       end
     end
   end
