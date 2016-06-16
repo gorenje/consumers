@@ -3,26 +3,46 @@ module Consumers
     attr_reader :cache
 
     def start_kafka_stream(name, group_id, topics, loop_count)
-      lgk_message = OpenStruct.new(:offset => -1)
-      lgk_event   = OpenStruct.new(:delay_in_seconds => -1)
+      start_stream(name) do
+        $kafka[name].consumer(:group_id => group_id).tap do |c|
+          [topics].flatten.each { |topic| c.subscribe(topic) }
+        end.each_batch(:loop_count => loop_count,:max_wait_time => 0) do |batch|
+          batch.messages.each do |message|
+            next unless handle_message_type?(message.value)
+
+            @lgk_message = message
+            @lgk_event   = do_work(message)
+          end
+        end
+      end
+    end
+
+    def start_kafka_stream_by_message(name, group_id, topics, loop_count)
+      start_stream(name) do
+        $kafka[name].consumer(:group_id => group_id).tap do |c|
+          [topics].flatten.each { |topic| c.subscribe(topic) }
+        end.each_message(:loop_count    => loop_count,
+                         :max_wait_time => 0) do |message|
+          next unless handle_message_type?(message.value)
+
+          @lgk_message = message
+          @lgk_event   = do_work(message)
+        end
+      end
+    end
+
+    def start_stream(name, &block)
+      @lgk_message = OpenStruct.new(:offset => -1)
+      @lgk_event   = OpenStruct.new(:delay_in_seconds => -1)
 
       begin_handling_messages
 
-      $kafka[name].consumer(:group_id => group_id).tap do |c|
-        [topics].flatten.each { |topic| c.subscribe(topic) }
-      end.each_batch(:loop_count => loop_count, :max_wait_time => 0) do |batch|
-        batch.messages.each do |message|
-          next unless handle_message_type?(message.value)
-
-          lgk_message = message
-          lgk_event   = do_work(message)
-        end
-      end
+      yield
 
       done_handling_messages
 
-      $librato_queue.add("#{name}_event_delay" => lgk_event.delay_in_seconds)
-      $librato_queue.add("#{name}_offset" => lgk_message.offset)
+      $librato_queue.add("#{name}_event_delay" => @lgk_event.delay_in_seconds)
+      $librato_queue.add("#{name}_offset" => @lgk_message.offset)
     end
 
     def handle_these_events(event_types)

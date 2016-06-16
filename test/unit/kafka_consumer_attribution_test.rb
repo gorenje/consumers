@@ -19,7 +19,7 @@ class KafkaConsumerAttributionTest < Minitest::Test
   context "perform" do
     should "should call start_kafka_stream" do
       mock(@consumer).
-        start_kafka_stream(:attribution, "attribution", "inapp", 600)
+        start_kafka_stream_by_message(:attribution, "attribution", "inapp", 600)
 
       @consumer.perform
     end

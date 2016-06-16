@@ -14,6 +14,13 @@ namespace :kafka do
             :topic => topics,
           }
         end
+        def start_kafka_stream_by_message(name, group_id, topics, loop_count)
+          $collection << {
+            :client_id => name,
+            :group => group_id,
+            :topic => topics,
+          }
+        end
       end
 
       [Consumers::Clickstats,
