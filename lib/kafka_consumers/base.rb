@@ -62,7 +62,6 @@ module Consumers
 
       unless exp.to_s =~ /No partitions assigned/
         puts(exp.backtrace) if exp.to_s =~ /redis/i
-        puts(exp.backtrace) if exp.to_s =~ /not allowed when used memory/i
       end
     end
 
