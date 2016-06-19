@@ -56,6 +56,10 @@ module Consumers
 
     def handle_exception(exp)
       puts "#{self.class.name}: Preventing retries on error: #{exp}"
+      if exp.to_s =~ /OOM command not allowed when used memory > 'maxmemory'./
+        puts "#{self.class.name}: Redis full, empty it."
+      end
+
       unless exp.to_s =~ /No partitions assigned/
         puts(exp.backtrace) if exp.to_s =~ /redis/i
         puts(exp.backtrace) if exp.to_s =~ /not allowed when used memory/i
