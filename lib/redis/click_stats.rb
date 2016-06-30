@@ -7,6 +7,15 @@ class RedisClickStats
     @stats           = new_stats_hash
   end
 
+  def update_postback(pbstats_event)
+    key = "pbstats:pb:#{pbstats_event.postback_id}"
+
+    @stats[key]["count"] += 1
+    @stats[key]["respcode:#{pbstats_event.response_code}"] += 1
+
+    flush if @stats.keys.size > 20
+  end
+
   def update(click_event)
     key = "clickstats:cl:#{click_event.campaign_link_id}"
 

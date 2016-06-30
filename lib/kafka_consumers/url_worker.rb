@@ -17,9 +17,10 @@ module Consumers
         status,resp_code = Consumers::Request::UrlHandler.new(hsh).fire_url
 
         @tracking_queue.
-          jpush([Tracking::Event.new.postback({:req => hsh.to_json,
-                                               :s   => status,
-                                               :rc  => resp_code})])
+          jpush([Tracking::Event.new.postback({:req  => hsh.to_json,
+                                               :s    => status,
+                                               :rc   => resp_code,
+                                               :pbid => hsh["pbid"]})])
       end
     rescue Exception => e
       puts e.message

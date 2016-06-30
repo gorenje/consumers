@@ -41,7 +41,8 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     end
 
     should "handle apo if there are postbacks" do
-      generate_postback(:url_template => "http://google.de", :event => "apo")
+      pb =
+        generate_postback(:url_template => "http://google.de", :event => "apo")
       assert_equal ["apo"], Postback.unique_events
       # update listen_to_these_events & postback_cache
       @consumer = Consumers::Postbacks.new
@@ -54,7 +55,8 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       @consumer.send(:do_work, make_kafka_message(msg))
 
       assert_equal 1, @redis_queue.size
-      assert_equal({"url"=>"http://google.de", "body"=>nil, "header"=>{}},
+      assert_equal({"url"=>"http://google.de", "body"=>nil, "header"=>{},
+                     "pbid" => pb.id },
                    JSON.parse(@redis_queue.pop.first))
     end
   end

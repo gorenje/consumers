@@ -25,6 +25,12 @@ class EventPayloads
         "adid=ECC27E57-1605-2714-CAFE-13DC6DFB742F&device=fubar"
     end
 
+    def postback
+      "/t/pob bot_name&country=DE&device=smartphone&device_name="+
+        "iPhone&ip=3160894398&klag=1&platform=ios&ts=1464712617 "+
+        "rc=200&s=ok&pbid=312&req={}"
+    end
+
     def click
       "/t/click bot_name&country=DE&device=desktop&device_name&"+
         "ip=2986884497&klag=1&platform=mac&ts=1465468519 ad=&adgroup=&adid&"+

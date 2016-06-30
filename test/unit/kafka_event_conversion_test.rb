@@ -54,35 +54,35 @@ class KafkaEventConversionTest < Minitest::Test
         }
       }
 
-      [
-       # don't select this since the platform doesn't match
-       { :platform      => @event.platform + "dontselect",
-         :url_template  => url + "&false=1",
-       },
-       # select this since the platform is 'all'
-       { :platform      => "all",
-         :url_template  => url,
-       },
-       # select this since the platform is the same as the event
-       { :platform      => @event.platform,
-         :url_template  => url + "&true=1",
-       },
-       # don't use this because it requires a user.
-       { :platform      => "all",
-         :url_template  => url + "&false=f",
-         :user_required => true
-       }
-      ].each { |overrides| generate_postback(overrides.merge(base_data)) }
+      pbs = [
+             # don't select this since the platform doesn't match
+             { :platform      => @event.platform + "dontselect",
+               :url_template  => url + "&false=1",
+             },
+             # select this since the platform is 'all'
+             { :platform      => "all",
+               :url_template  => url,
+             },
+             # select this since the platform is the same as the event
+             { :platform      => @event.platform,
+               :url_template  => url + "&true=1",
+             },
+             # don't use this because it requires a user.
+             { :platform      => "all",
+               :url_template  => url + "&false=f",
+               :user_required => true
+             }
+            ].map { |overrides| generate_postback(overrides.merge(base_data)) }
 
       assert_equal 2, @event.generate_urls.count
       assert_equal([{:url=>"https://localhost.com/conv?adid="+
                       "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
                       "did=clickdata&pkg=PackageNameDemo",
-                      :body=>nil, :header=>{}},
-                      {:url=>"https://localhost.com/conv?adid="+
-                        "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
-                        "did=clickdata&pkg=PackageNameDemo&true=1",
-                     :body=>nil, :header=>{}}],
+                      :body=>nil, :header=>{}, :pbid => pbs[1].id},
+                    {:url=>"https://localhost.com/conv?adid="+
+                      "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
+                      "did=clickdata&pkg=PackageNameDemo&true=1",
+                      :body=>nil, :header=>{}, :pbid => pbs[2].id}],
                    @event.generate_urls.sort_by { |h| h[:url] })
     end
   end

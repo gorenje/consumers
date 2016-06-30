@@ -40,6 +40,7 @@ class UrlConfigParser
     @check  = postback.env["check"]
     @user   = postback.user_required? ? event.network_user(postback) : nil
     @netcfg = postback.netcfg
+    @pb_id  = postback.id
   end
 
   def valid_check?
@@ -68,7 +69,8 @@ class UrlConfigParser
                     end
     parsed_header.each {|key, value| parsed_header[key] = value.first }
 
-    { :url => parsed_url, :body => parsed_body, :header => parsed_header }
+    { :url => parsed_url, :body => parsed_body, :header => parsed_header,
+      :pbid => @pb_id }
   end
 
   def sha1(value)

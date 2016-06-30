@@ -8,3 +8,4 @@
   - [clickstats_consumer, 3]
   - [conversion_consumer, 3]
   - [attribution_consumer, 3]
+  - [pbstats_consumer, 3]
