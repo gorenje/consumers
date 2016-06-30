@@ -11,6 +11,41 @@ class ApiTest < Minitest::Test
   def setup
   end
 
+  context "delete" do
+    should "delete postback" do
+      replace_in_env("API_SECRET_KEY" => "somekey") do
+        pb = generate_postback
+        Postback.delete_all
+        salt = "somesalt"
+        pepper = Digest::SHA1.hexdigest(salt + pb.to_json + "somekey")
+        assert 1, Postback.count
+
+        post("/api/1/delete", { :postback => pb.to_json, :pepper => pepper },
+             { "HTTP_X_API_SALT" => salt })
+
+        assert_raises ActiveRecord::RecordNotFound do
+          Postback.find(pb.id)
+        end
+        assert 0, Postback.count
+        assert last_response.ok?
+      end
+    end
+
+    should "not do anything if pepper is wrong" do
+      replace_in_env("API_SECRET_KEY" => "somekey") do
+        Postback.delete_all
+        pb = generate_postback
+        salt = "somesalt"
+        pepper = Digest::SHA1.hexdigest(salt + pb.to_json + "somekey")
+
+        post("/api/1/delete", {:postback => pb.to_json, :pepper => pepper }, {})
+
+        assert 1, Postback.count
+        assert last_response.not_found?
+      end
+    end
+  end
+
   context "without api key" do
     should "create new postback" do
       replace_in_env("API_SECRET_KEY" => nil) do

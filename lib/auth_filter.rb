@@ -12,7 +12,9 @@ class AuthFilter
     end
 
     unless request.session[:authenticated]
-      unless (['/accessdenied', '/auth', '/oauth2callback', '/api/1/create', '/pingdom'].include?(request.path_info) || request.path_info =~ /^\/auth/)
+      unless (['/accessdenied', '/auth', '/oauth2callback', '/api/1/create',
+               '/pingdom', '/api/1/delete'].
+              include?(request.path_info) || request.path_info =~ /^\/auth/)
         url = request.scheme + "://" + request.host_with_port + "/auth"
         return [ 307, { 'Location' => url }, []]
       end

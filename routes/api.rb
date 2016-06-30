@@ -12,3 +12,16 @@ post '/api/:version/create' do
     update(cl)
   json({ :status => :ok })
 end
+
+post '/api/:version/delete' do
+  if ENV['API_SECRET_KEY']
+    pepper = Digest::SHA1.
+      hexdigest(request.env["HTTP_X_API_SALT"] + params[:postback] +
+                ENV['API_SECRET_KEY']) rescue ""
+    halt(404) if params[:pepper] != pepper
+  end
+
+  cl = JSON.parse(params[:postback])
+  Postback.find(cl["id"]).delete rescue nil
+  json({ :status => :ok })
+end
