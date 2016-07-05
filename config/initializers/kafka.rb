@@ -1,7 +1,8 @@
 require 'kafka'
+require_relative './host_handler'
 
 opts = {
-  :seed_brokers => ["#{ENV['KAFKA_HOST']}:9092"],
+  :seed_brokers => ["#{$hosthandler.kafka.host}:9092"],
   :logger       => Logger.new($stderr),
 }
 opts[:logger].level = Logger::WARN if ENV['RACK_ENV'] == 'production'

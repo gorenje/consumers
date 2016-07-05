@@ -41,6 +41,7 @@ gem 'erubis'
 gem 'uuidtools'
 
 gem 'net-http-persistent'
+gem 'adtekio_host_handler', :gist => "gorenje/7ed69e4a1de2568970a69d166e1b6b0f"
 
 group :development do
   gem 'dotenv'

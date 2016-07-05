@@ -1,7 +1,7 @@
 module Tracking
   class Event
     DefaultOptions = {
-      :host => "https://inapp.adtek.io"
+      :host => $hosthandler.tracking.url
     }
 
     def initialize
