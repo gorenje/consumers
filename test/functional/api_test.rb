@@ -26,7 +26,7 @@ class ApiTest < Minitest::Test
         assert_raises ActiveRecord::RecordNotFound do
           Postback.find(pb.id)
         end
-        assert 0, Postback.count
+        assert_zero Postback.count
         assert last_response.ok?
       end
     end
@@ -40,7 +40,7 @@ class ApiTest < Minitest::Test
 
         post("/api/1/delete", {:postback => pb.to_json, :pepper => pepper }, {})
 
-        assert 1, Postback.count
+        assert_one Postback.count
         assert last_response.not_found?
       end
     end
@@ -64,14 +64,14 @@ class ApiTest < Minitest::Test
         pb = generate_postback(:network => "snafu")
         Postback.delete_all
         post("/api/1/create", { :postback => pb.to_json })
-        assert_equal 1, Postback.count
+        assert_one Postback.count
 
         pb = Postback.find(pb.id)
         assert_equal "snafu", pb.network
         pb.network = "fubar"
 
         post("/api/1/create", { :postback => pb.to_json })
-        assert_equal 1, Postback.count
+        assert_one Postback.count
         assert last_response.ok?
 
         pb = Postback.find(pb.id)
@@ -91,7 +91,7 @@ class ApiTest < Minitest::Test
         post("/api/1/create", { :postback => pb.to_json, :pepper => pepper },
              {})
 
-        assert 0, Postback.count
+        assert_zero Postback.count
         assert last_response.not_found?
       end
     end
@@ -106,7 +106,7 @@ class ApiTest < Minitest::Test
         post("/api/1/create", { :postback => pb.to_json, :pepper => "p" },
              { "HTTP_X_API_SALT" => salt })
 
-        assert 0, Postback.count
+        assert_zero Postback.count
         assert last_response.not_found?
       end
     end
@@ -122,7 +122,7 @@ class ApiTest < Minitest::Test
              { "HTTP_X_API_SALT" => salt })
 
         assert Postback.find(pb.id)
-        assert 1, Postback.count
+        assert_one Postback.count
         assert last_response.ok?
       end
     end
@@ -138,7 +138,7 @@ class ApiTest < Minitest::Test
              { "HTTP_X_API_SALT" => salt })
 
         assert Postback.find(pb.id)
-        assert 1, Postback.count
+        assert_one Postback.count
         assert last_response.ok?
       end
     end
@@ -149,7 +149,7 @@ class ApiTest < Minitest::Test
         Postback.delete_all
         post("/api/1/create", { :postback => pb.to_json })
 
-        assert 0, Postback.count
+        assert_zero Postback.count
         assert last_response.not_found?
       end
     end

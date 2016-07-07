@@ -43,6 +43,14 @@ class Minitest::Test
     binding.pry
   end
 
+  def assert_zero(val, msg = nil)
+    assert_equal 0, val, msg
+  end
+
+  def assert_one(val, msg = nil)
+    assert_equal 1, val, msg
+  end
+
   def assert_not_match(regexp, str, msg = nil)
     assert !(str =~ regexp), msg
   end

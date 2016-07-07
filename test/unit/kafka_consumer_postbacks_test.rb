@@ -26,7 +26,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @redis_queue.size
+      assert_zero @redis_queue.size
     end
 
     should "not handle apo events if there are postbacks" do
@@ -37,7 +37,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @redis_queue.size
+      assert_zero @redis_queue.size
     end
 
     should "handle apo if there are postbacks" do
@@ -54,7 +54,7 @@ class KafkaConsumerPostbacksTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 1, @redis_queue.size
+      assert_one @redis_queue.size
       assert_equal({"url"=>"http://google.de", "body"=>nil, "header"=>{},
                      "pbid" => pb.id },
                    JSON.parse(@redis_queue.pop.first))

@@ -50,7 +50,7 @@ class KafkaConsumerAttributionTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @url_queue.size
+      assert_zero @url_queue.size
     end
 
     should "lookup click event and trigger mac call if match found" do
@@ -79,9 +79,9 @@ class KafkaConsumerAttributionTest < Minitest::Test
         conversion({ :click   => EventPayloads.click,
                      :install => EventPayloads.install})
 
-      assert_equal 1, @url_queue.size
+      assert_one @url_queue.size
       assert_equal(JSON.parse(mac_url.to_json), @url_queue.jpop.first)
-      assert_equal 0, NetworkUser.count
+      assert_zero NetworkUser.count
     end
 
     should "lookup click event, trigger mac call, and store user" do
@@ -116,7 +116,7 @@ class KafkaConsumerAttributionTest < Minitest::Test
         conversion({ :click   => EventPayloads.click,
                      :install => EventPayloads.install})
 
-      assert_equal 1, @url_queue.size
+      assert_one @url_queue.size
       assert_equal(JSON.parse(mac_url.to_json), @url_queue.jpop.first)
     end
   end

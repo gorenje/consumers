@@ -31,7 +31,7 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @redis_queue.size
+      assert_zero @redis_queue.size
     end
 
     should "not handle mac without install" do
@@ -47,7 +47,7 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @redis_queue.size
+      assert_zero @redis_queue.size
     end
 
     should "not handle mac without click" do
@@ -63,7 +63,7 @@ class KafkaConsumerConversionTest < Minitest::Test
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
-      assert_equal 0, @redis_queue.size
+      assert_zero @redis_queue.size
     end
 
     should "with a valid mac, do work" do

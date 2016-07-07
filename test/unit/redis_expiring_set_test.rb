@@ -35,7 +35,7 @@ class RedisExpiringSetTest < Minitest::Test
                                          :payload    => idx,
                                          :max_age    => Time.now))
       end
-      assert_equal 1, @clickstore.instance_variable_get("@cache").keys.size
+      assert_one @clickstore.instance_variable_get("@cache").keys.size
       assert_equal(401, @clickstore.
                    instance_variable_get("@cache")["samekey"].keys.size)
       assert @clickstore.send(:cache_full?)
@@ -53,7 +53,7 @@ class RedisExpiringSetTest < Minitest::Test
       @clickstore.add_click_event(event)
       @clickstore.flush
       assert @clickstore.ttl(event.lookup_key) > 150
-      assert_equal 1, @clickstore.zcard(event.lookup_key)
+      assert_one @clickstore.zcard(event.lookup_key)
     end
 
     should "update ttl when adding a new entry" do
@@ -63,7 +63,7 @@ class RedisExpiringSetTest < Minitest::Test
       @clickstore.add_click_event(event)
       @clickstore.flush
       assert @clickstore.ttl(event.lookup_key) > 150
-      assert_equal 1, @clickstore.zcard(event.lookup_key)
+      assert_one @clickstore.zcard(event.lookup_key)
 
       event = Consumers::Kafka::ClickEvent.new(EventPayloads.click)
       mock(event).max_age { Time.now + 1200 }
@@ -73,7 +73,7 @@ class RedisExpiringSetTest < Minitest::Test
       assert @clickstore.ttl(event.lookup_key) > 1000
       # payload is the same, so there isn't a new entry in the set
       # only the ttl gets updated.
-      assert_equal 1, @clickstore.zcard(event.lookup_key)
+      assert_one @clickstore.zcard(event.lookup_key)
     end
   end
 
@@ -101,11 +101,11 @@ class RedisExpiringSetTest < Minitest::Test
       @clickstore.expire!(key, t + 2)
       assert_equal 2, @clickstore.zcard(key)
       @clickstore.expire!(key, t + 3)
-      assert_equal 1, @clickstore.zcard(key)
+      assert_one @clickstore.zcard(key)
       @clickstore.expire!(key, t + 3)
-      assert_equal 1, @clickstore.zcard(key)
+      assert_one @clickstore.zcard(key)
       @clickstore.expire!(key, t + 4)
-      assert_equal 0, @clickstore.zcard(key)
+      assert_zero @clickstore.zcard(key)
     end
   end
 end
