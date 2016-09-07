@@ -102,7 +102,6 @@ class Minitest::Test
                       :user_required => false,
                       :store_user    => false,
                       :env           => { },
-                      :url_template  => "http://localhost/fubar"
                     }.merge(overrides))
   end
 end

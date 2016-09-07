@@ -27,7 +27,7 @@ gem 'sidekiq-cron'
 gem 'librato-metrics'
 gem 'librato-rack'
 
-gem 'ruby-kafka', :git => 'https://github.com/gorenje/ruby-kafka.git'
+gem 'ruby-kafka', :github => 'gorenje/ruby-kafka'
 gem 'oauth2'
 
 gem 'activerecord'
@@ -42,6 +42,7 @@ gem 'uuidtools'
 
 gem 'net-http-persistent'
 gem 'adtekio_host_handler', :gist => "gorenje/7ed69e4a1de2568970a69d166e1b6b0f"
+gem 'adtekio_adnetworks', :github => "adtekio/adnetworks"
 
 group :development do
   gem 'dotenv'

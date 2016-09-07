@@ -1,5 +1,6 @@
 # encoding: UTF-8
 require_relative '../test_helper'
+require_relative '../adnetwork_definitions'
 
 class KafkaEventConversionTest < Minitest::Test
 
@@ -13,10 +14,10 @@ class KafkaEventConversionTest < Minitest::Test
   context "use postback cache" do
     should "use it correctly" do
       c = {
-        "eccrine" => {
+        "mac_network" => {
           "mac" => {
             2 => {
-              "" => [1,2,3,4],
+              "ios" => [1,2,3,4],
               "all" => [5,6,7,8]
             }
           }
@@ -39,11 +40,8 @@ class KafkaEventConversionTest < Minitest::Test
     end
 
     should "generate urls" do
-      url = "https://localhost.com/conv?adid=@{event.adid}@&aid="+
-        "@{netcfg.aid}@&did=@{params[:click]}@&pkg=@{netcfg.pkg}@"
-
       base_data = {
-        :network => @event.network,
+        :network => "mac_network",
         :event   => @event.call,
         :user_id => @event.user_id,
         :env     => {
@@ -56,34 +54,31 @@ class KafkaEventConversionTest < Minitest::Test
 
       pbs = [
              # don't select this since the platform doesn't match
-             { :platform      => @event.platform + "dontselect",
-               :url_template  => url + "&false=1",
+             { :platform      => "dontselect",
              },
              # select this since the platform is 'all'
              { :platform      => "all",
-               :url_template  => url,
              },
              # select this since the platform is the same as the event
-             { :platform      => @event.platform,
-               :url_template  => url + "&true=1",
+             { :platform      => "ios",
              },
              # don't use this because it requires a user.
              { :platform      => "all",
-               :url_template  => url + "&false=f",
                :user_required => true
              }
             ].map { |overrides| generate_postback(overrides.merge(base_data)) }
 
+      assert_equal 3, @event.postbacks.count
       assert_equal 2, @event.generate_urls.count
-      assert_equal([{:url=>"https://localhost.com/conv?adid="+
+      assert_equal([{:url=>"https://localhost.com/convALL?adid="+
                       "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
                       "did=clickdata&pkg=PackageNameDemo",
-                      :body=>nil, :header=>{}, :pbid => pbs[1].id},
+                      :body=>"", :header=>{}, :pbid => pbs[1].id},
                     {:url=>"https://localhost.com/conv?adid="+
                       "ECC27E57-1605-2714-CAFE-13DC6DFB742F&aid=AidDemo&"+
-                      "did=clickdata&pkg=PackageNameDemo&true=1",
-                      :body=>nil, :header=>{}, :pbid => pbs[2].id}],
-                   @event.generate_urls.sort_by { |h| h[:url] })
+                      "did=clickdata&pkg=PackageNameDemo",
+                      :body=>"", :header=>{}, :pbid => pbs[2].id}],
+                   @event.generate_urls.sort_by { |h| h[:pbid] })
     end
   end
 end

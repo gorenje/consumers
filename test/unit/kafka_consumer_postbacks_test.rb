@@ -1,8 +1,8 @@
 # encoding: UTF-8
 require_relative '../test_helper'
+require_relative '../adnetwork_definitions'
 
 class KafkaConsumerPostbacksTest < Minitest::Test
-
   def setup
     @redis_queue = RedisQueue.new($redis.local, :url_queue)
     @redis_queue.clear!
@@ -41,8 +41,8 @@ class KafkaConsumerPostbacksTest < Minitest::Test
     end
 
     should "handle apo if there are postbacks" do
-      pb =
-        generate_postback(:url_template => "http://google.de", :event => "apo")
+      pb = generate_postback(:event => "apo", :network => "mynetwork")
+
       assert_equal ["apo"], Postback.unique_events
       # update listen_to_these_events & postback_cache
       @consumer = Consumers::Postbacks.new
@@ -50,12 +50,13 @@ class KafkaConsumerPostbacksTest < Minitest::Test
       msg = "/t/apo m p"
 
       mock(@consumer).handle_exception.times(0)
-      mock($librato_aggregator).add("postback_url_count" => 1)
+      # mock($librato_aggregator).add("postback_url_count" => 1)
 
       @consumer.send(:do_work, make_kafka_message(msg))
 
       assert_one @redis_queue.size
-      assert_equal({"url"=>"http://google.de", "body"=>nil, "header"=>{},
+      assert_equal({"url"=>"http://google.de?app_id=&click_id=",
+                     "body"=>"", "header"=>{},
                      "pbid" => pb.id },
                    JSON.parse(@redis_queue.pop.first))
     end

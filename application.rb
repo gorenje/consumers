@@ -14,6 +14,7 @@ require 'ipaddr'
 require 'addressable/uri'
 require 'cgi'
 require 'tilt/erubis'
+require 'adtekio_adnetworks'
 
 if File.exists?(".env")
   require 'dotenv'

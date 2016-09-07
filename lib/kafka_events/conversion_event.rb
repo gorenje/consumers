@@ -62,7 +62,7 @@ module Consumers
           # define the user (assumed to be after the postback is done)
           next if postback.user_required?
           UrlConfigParser.new(self.click, postback).generate
-        end.compact.reject { |h| h[:url].blank? }
+        end.flatten.compact.reject { |h| h[:url].blank? }
       end
     end
   end

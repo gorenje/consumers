@@ -51,7 +51,7 @@ module Consumers
         uri = URI.parse(url)
         req = nil
 
-        unless body.nil?
+        unless body.blank?
           req = Net::HTTP::Post.new(uri.request_uri)
           req.body = body
         end

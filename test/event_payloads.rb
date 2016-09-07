@@ -11,12 +11,12 @@ class EventPayloads
         "%26campaign_link_id%3D41%26click%3Dclickdata%26created_at%3D"+
         "2016-06-04T10%253A18%253A21%252B00%253A00%26idfa_comb%3D"+
         "ECC27E57-1605-2714-CAFE-13DC6DFB742F%26lookup_key%3D"+
-        "bb0ca0283abd536a7ae2941c6cde29dd%26network%3Deccrine%26"+
+        "bb0ca0283abd536a7ae2941c6cde29dd%26network%3Dmac_network%26"+
         "partner_data%26redirect_url%3Dhttps%253A%252F%252Fplay.google.com"+
         "%252Fstore%252Fapps%252Fdetails%253Fid%253Dcom.fubar.game"+
         "%26user_id%3D2&install=%2Ft%2Fist%20bot_name%26country%3DUS"+
         "%26device%26device_name%26ip%3D1796505292%26klag%3D1%26platform"+
-        "%3D%26ts%3D1465035505%20adid%3DECC27E57-1605-2714-CAFE-13DC6DFB742F"
+        "%3Dios%26ts%3D1465035505%20adid%3DECC27E57-1605-2714-CAFE-13DC6DFB742F"
     end
 
     def install
