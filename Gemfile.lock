@@ -1,21 +1,4 @@
 GIT
-  remote: git://github.com/adtekio/adnetworks.git
-  revision: b21c2b3e13e8e4a4f6e5e23245bda3f4b061f64e
-  specs:
-    adtekio_adnetworks (0.0.2)
-      activesupport
-      addressable
-      curb
-      erubis
-      google-adwords-api
-      google-api-client
-      mechanize
-      net-http-persistent
-      oauth2
-      rest-client
-      uuidtools
-
-GIT
   remote: git://github.com/gorenje/ruby-kafka.git
   revision: 3344d3b05c916683fd2fdc2ae8ad7c1a623136e9
   specs:
@@ -63,6 +46,18 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.4.0)
+    adtekio_adnetworks (0.0.4)
+      activesupport
+      addressable
+      curb
+      erubis
+      google-adwords-api
+      google-api-client
+      mechanize
+      net-http-persistent
+      oauth2
+      rest-client
+      uuidtools
     aggregate (0.2.2)
     akami (1.3.1)
       gyoku (>= 0.4.0)
@@ -293,7 +288,7 @@ DEPENDENCIES
   activerecord
   activerecord-postgresql-adapter
   addressable
-  adtekio_adnetworks!
+  adtekio_adnetworks
   adtekio_host_handler!
   dotenv
   erubis
