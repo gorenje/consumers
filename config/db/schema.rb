@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160613130517) do
+ActiveRecord::Schema.define(version: 20160913180906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,14 +31,16 @@ ActiveRecord::Schema.define(version: 20160613130517) do
   add_index "network_users", ["user_identifier"], name: "index_network_users_on_user_identifier", using: :btree
 
   create_table "postbacks", force: :cascade do |t|
-    t.string  "network"
-    t.string  "event"
-    t.string  "platform"
-    t.integer "user_id"
-    t.boolean "user_required", default: false
-    t.boolean "store_user",    default: false
-    t.json    "env"
-    t.string  "url_template"
+    t.string   "network"
+    t.string   "event"
+    t.string   "platform"
+    t.integer  "user_id"
+    t.boolean  "user_required", default: false
+    t.boolean  "store_user",    default: false
+    t.json     "env"
+    t.string   "url_template"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "postbacks", ["event", "platform"], name: "index_postbacks_on_event_and_platform", using: :btree
