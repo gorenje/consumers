@@ -1,14 +1,14 @@
 GIT
+  remote: git://github.com/adtekio/utilities.git
+  revision: 77893307be1b56852e43f5dc29e749deffdcb5ba
+  specs:
+    adtekio_utilities (0.0.1)
+
+GIT
   remote: git://github.com/gorenje/ruby-kafka.git
   revision: 3344d3b05c916683fd2fdc2ae8ad7c1a623136e9
   specs:
     ruby-kafka (0.3.7)
-
-GIT
-  remote: https://gist.github.com/gorenje/7ed69e4a1de2568970a69d166e1b6b0f.git
-  revision: bdc013665eb9bd611e750f1c0886eae17ef4aca2
-  specs:
-    adtekio_host_handler (0.0.2)
 
 GEM
   remote: http://rubygems.org/
@@ -289,7 +289,7 @@ DEPENDENCIES
   activerecord-postgresql-adapter
   addressable
   adtekio_adnetworks
-  adtekio_host_handler!
+  adtekio_utilities!
   dotenv
   erubis
   fakeweb

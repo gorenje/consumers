@@ -1,3 +1,3 @@
-require 'adtekio_host_handler'
+require 'adtekio_utilities'
 
-$hosthandler = Adtekio::HostHandler.load_from_environment
+$hosthandler = AdtekioUtilities::HostHandler.load_from_environment
