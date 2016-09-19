@@ -4,10 +4,11 @@ language: ruby
 rvm:
   - 2.2.3
 env:
-  - RACK_ENV=test
-  - DATABASE_URL=postgres://postgres:@localhost:5432/travis_ci
-  - KAFKA_HOST=kafka.adtek.io
-  - TRACKING_HOST=inapp.adtek.io
+  global:
+    - RACK_ENV=test
+    - DATABASE_URL=postgres://postgres:@localhost:5432/travis_ci
+    - KAFKA_HOST=kafka.adtek.io
+    - TRACKING_HOST=inapp.adtek.io
 services:
   - redis-server
   - postgresql
