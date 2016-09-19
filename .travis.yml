@@ -3,12 +3,19 @@ dist: trusty
 language: ruby
 rvm:
   - 2.2.3
+env:
+  - RACK_ENV=test
+  - DATABASE_URL=postgres://postgres:@localhost:5432/travis_ci
+  - KAFKA_HOST=kafka.adtek.io
+  - TRACKING_HOST=inapp.adtek.io
 services:
   - redis-server
   - postgresql
 before_install:
   - bundle config git.allow_insecure true
 before_script:
+  - psql -U postgres -c "create extension plpgsql"
+  - psql -U postgres -c "create extension hstore"
   - psql -c 'create database travis_ci_test;' -U postgres
   - bundle exec rake db:migrate
 addons:
