@@ -9,6 +9,7 @@ env:
     - DATABASE_URL=postgres://postgres:@localhost:5432/travis_ci
     - KAFKA_HOST=kafka.adtek.io
     - TRACKING_HOST=inapp.adtek.io
+    - COOKIE_SECRET=babeca7ea679fa45ca92566e83d801bc0b
 services:
   - redis-server
   - postgresql
