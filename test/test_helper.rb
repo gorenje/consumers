@@ -13,10 +13,12 @@ if ENV['DATABASE_URL'].nil? && File.exists?(".env")
   Dotenv.load
 end
 
-ENV['DATABASE_URL']          = ENV['DATABASE_URL'] + "_test"
-ENV['REDISTOGO_URL']         = "redis://localhost:6379/15"
-ENV['CLICK_STATS_REDIS_URL'] = "redis://localhost:6379/15"
-ENV['CLICK_REDIS_URL']       = "redis://localhost:6379/15"
+unless ENV['DATABASE_URL'] =~ /_test$/
+  ENV['DATABASE_URL'] = ENV['DATABASE_URL'] + "_test"
+end
+ENV['REDISTOGO_URL']         = "redis://localhost:6379/12"
+ENV['CLICK_STATS_REDIS_URL'] = "redis://localhost:6379/12"
+ENV['CLICK_REDIS_URL']       = "redis://localhost:6379/12"
 
 require 'rack/test'
 require 'shoulda'
