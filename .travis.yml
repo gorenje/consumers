@@ -15,8 +15,8 @@ services:
 before_install:
   - bundle config git.allow_insecure true
 before_script:
-  - psql -U postgres -c "create extension hstore"
   - psql -c 'create database travis_ci_test;' -U postgres
+  - psql travis_ci_test -U postgres -c "create extension if not exists hstore"
   - bundle exec rake db:migrate
 addons:
   postgresql: "9.5"
